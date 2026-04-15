@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Header-->
+<header class="bg-dark py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="text-center text-white">
+            <h1 class="display-4 fw-bolder">Оформление заказа</h1>
+            <p class="lead fw-normal text-white-50 mb-0">Проверьте данные и подтвердите заказ</p>
+        </div>
+    </div>
+</header>
+<br/>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <!-- Информация о товарах -->
+            <div class="card mb-3">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Ваши товары</h5>
+                </div>
+                <div class="card-body">
+                    {% for product in cart_products %}
+                        <div class="mb-2">
+                            <strong>{{ product.name }}:</strong>
+                            {% if product.is_sale %}
+                                {{ product.sale_price }} руб
+                            {% else %}
+                                {{ product.price }} руб
+                            {% endif %}
+                            <span class="badge bg-secondary ms-2">
+                                Количество: 
+                                {% for key, value in quantities.items %}
+                                    {% if key == product.id|slugify %}
+                                        {{ value }}
+                                    {% endif %}
+                                {% endfor %}
+                            </span>
+                        </div>
+                    {% endfor %}
+                    <hr>
+                    <h5 class="text-end">Итого: <strong>{{ totals }} руб</strong></h5>
+                </div>
+            </div>
+
+            <div class="card mb-3">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Данные доставки</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Имя:</strong> {{ shipping_info.shipping_full_name }}</p>
+                    <p><strong>Email:</strong> {{ shipping_info.shipping_email }}</p>
+                    <p><strong>Адрес:</strong> {{ shipping_info.shipping_address }}</p>
+                    <p><strong>Город:</strong> {{ shipping_info.shipping_city }}</p>
+                    <a href="{% url 'checkout' %}" class="btn btn-outline-secondary btn-sm">Изменить адрес</a>
+                </div>
+            </div>
+
+            <!-- ФОРМА ПОДТВЕРЖДЕНИЯ (без данных оплаты) -->
+            <div class="card mb-3">
+                
+                <div class="card-body">
+                    <form method="POST" action="{% url 'process_order' %}">
+                        {% csrf_token %}
+                        <p class="text-center mb-3">Проверьте правильность данных доставки</p>
+                        <button type="submit" class="btn btn-success w-100 mt-3">Подтвердить заказ</button>
+                    </form>
+                </div>
+            </div>
+            <br/><br/>
+        </div>
+    </div>
+</div>
+{% endblock %}

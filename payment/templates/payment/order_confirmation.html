@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Подтверждение заказа</title>
+</head>
+<body>
+    <h2>Спасибо за ваш заказ!</h2>
+    <p>Ваш заказ №{{ order_details.order_id }} принят в обработку.</p>
+    
+    <h3>Детали заказа:</h3>
+    <ul>
+        {% for product in order_details.products %}
+        <li>
+            {{ product.name }} - {{ product.price }} руб × {{ product.quantity }}
+        </li>
+        {% endfor %}
+    </ul>
+    
+    <p><strong>Итого: {{ order_details.total }} руб</strong></p>
+    
+    <h3>Данные доставки:</h3>
+    <p>{{ order_details.shipping_info.shipping_full_name }}</p>
+    <p>{{ order_details.shipping_info.shipping_address }}</p>
+    <p>{{ order_details.shipping_info.shipping_city }}</p>
+    
+  
+    
+    <p>С уважением,<br>Команда Tatarbazar</p>
+</body>
+</html>

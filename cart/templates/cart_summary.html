@@ -1,0 +1,237 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- Header-->
+<header class="bg-dark text-white py-5" style="
+    height: 40vh;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+">   
+    <div class="container text-center" style="position: relative; z-index: 2;">
+        <h1 class="display-4 fw-bold">Корзина</h1>
+    </div>
+</header>
+<br/>
+<div class="container">
+{% if cart_products %}
+    {% for product in cart_products %}
+    
+<div class="card mb-3">
+  <div class="row g-0">
+    <div class="col-md-4">
+      <!-- Контейнер для изображения с соотношением 3:4 -->
+      <div style="width: 100%; height: 0; padding-bottom: 133.33%; position: relative; overflow: hidden;">
+        <img src="{{ product.image.url }}" 
+             class="img-fluid rounded-start" 
+             alt="{{ product.name }}"
+             style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
+      </div>
+    </div>
+    <div class="col-md-8">
+      <div class="card-body">
+        <center>
+        <h5 class="card-title">{{ product.name }}</h5>
+        <br/>
+        <p class="card-text justified">{{ product.description }}</p>
+        
+        {% if product.is_sale %}
+        <div class="d-flex justify-content-center small text-warning mb-2">
+                <div class="bi-star-fill"></div>
+                &nbsp;&nbsp;Распродажа!&nbsp;&nbsp;
+                <div class="bi-star-fill"></div>
+                </div>
+
+                <!-- Product price-->
+                <strike>
+                {{ product.price }} руб
+                </strike>
+                &nbsp;
+                {{ product.sale_price }} руб
+
+        {% else %}
+            {{ product.price }} руб
+            
+        {% endif %}
+            <br/><br/>
+            
+            <div class="row justify-content-center align-items-center">
+                <div class="col-auto">
+                    <button class="btn btn-outline-secondary minus-btn" data-index="{{product.id}}">-</button>
+                </div>
+                <div class="col-auto">
+                    <input type="number" class="form-control text-center qty-input" 
+                           id="qty{{product.id}}" 
+                           value="{% for key, value in quantities.items %}{% if key == product.id|slugify %}{{ value }}{% endif %}{% endfor %}" 
+                           min="1" max="50" style="width: 60px;"
+                           data-index="{{product.id}}">
+                </div>
+                <div class="col-auto">
+                    <button class="btn btn-outline-secondary plus-btn" data-index="{{product.id}}">+</button>
+                </div>
+            </div>
+            
+            <br/><br/>
+        <a href="{% url 'home'%}" class="btn btn-secondary">Главная</a>
+        <button type="button" data-index="{{product.id}}" class="btn btn-danger delete-product">Удалить</button>
+        
+    </center>
+      </div>
+    </div>
+  </div>
+</div>
+
+    {% endfor %}
+    <div align="right">
+    <h3 id="cart-total">Итого: {{ totals }} руб</h3>
+    <button class="btn btn-danger" id="clear-cart">Очистить корзину</button>
+    
+    {% if user.is_authenticated %}
+        <a href="{% url 'checkout' %}" class="btn btn-success">Оформить заказ</a>
+    {% else %}
+        <button class="btn btn-success" id="checkout-btn">Оформить заказ</button>
+    {% endif %}
+</div>
+
+    <br/><br/><br/>
+    {% else %}
+    В корзине пусто...
+    <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+{% endif %}
+</div>
+
+<script>
+$(document).ready(function() {
+    // Проверка авторизации при попытке оформления заказа
+    $('#checkout-btn').on('click', function() {
+        Swal.fire({
+            title: 'Требуется авторизация',
+            text: 'Пожалуйста, войдите в систему или зарегистрируйтесь для оформления заказа',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Войти',
+            cancelButtonText: 'Регистрация',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = "{% url 'login' %}";
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                window.location.href = "{% url 'register' %}";
+            }
+        });
+    });
+
+    // Общие функции для работы с количеством
+    function updateQuantity(input, change) {
+        var currentVal = parseInt(input.val());
+        var newVal = currentVal + change;
+        
+        if (newVal >= 1 && newVal <= 50) {
+            input.val(newVal);
+            // Автоматически обновляем корзину при изменении количества
+            var productId = input.data('index');
+            updateCart(productId, newVal);
+        }
+        return newVal;
+    }
+
+    // Обработчики кнопок +/-
+    $(document).on('click', '.minus-btn', function(e) {
+        e.preventDefault();
+        var productId = $(this).data('index');
+        var input = $('#qty' + productId);
+        updateQuantity(input, -1);
+    });
+
+    $(document).on('click', '.plus-btn', function(e) {
+        e.preventDefault();
+        var productId = $(this).data('index');
+        var input = $('#qty' + productId);
+        updateQuantity(input, 1);
+    });
+
+    // Валидация ввода
+    $('.qty-input').on('change', function() {
+        var value = parseInt($(this).val());
+        if (isNaN(value) || value < 1) $(this).val(1);
+        if (value > 50) $(this).val(50);
+        var productId = $(this).data('index');
+        updateCart(productId, value);
+    });
+
+    // Удаление товара
+    $(document).on('click', '.delete-product', function(e) {
+        e.preventDefault();
+        if (confirm('Удалить товар из корзины?')) {
+            var productId = $(this).data('index');
+            deleteFromCart(productId);
+        }
+    });
+
+    // Функции AJAX
+    function updateCart(productId, qty) {
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'cart_update' %}",
+            data: {
+                product_id: productId,
+                product_qty: qty,
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                action: 'post'  
+            },
+            success: function(response) {
+                console.log(response);  // Проверка
+                if (response.totals !== undefined) {
+                    $('#cart-total').text('Итого: ' + response.totals + ' руб');
+                }
+            },
+            error: function(xhr) {
+                console.error('Ошибка обновления:', xhr.responseText);
+            }
+        });
+    }
+
+    function deleteFromCart(productId) {
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'cart_delete' %}",
+            data: {
+                product_id: productId,
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            success: function() {
+                // Перезагружаем страницу после удаления
+                location.reload();
+            },
+            error: function(xhr) {
+                console.error('Ошибка удаления:', xhr.responseText);
+            }
+        });
+    }
+    
+    // Очистить корзину
+    $('#clear-cart').on('click', function(e) {
+        e.preventDefault();
+        if (confirm('Вы уверены, что хотите очистить корзину?')) {
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'cart_clear' %}",
+                data: {
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function() {
+                    location.reload();
+                },
+                error: function(xhr) {
+                    console.error('Ошибка очистки корзины:', xhr.responseText);
+                }
+            });
+        }
+    });
+});
+</script>
+
+{% endblock %}

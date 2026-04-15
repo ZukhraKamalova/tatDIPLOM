@@ -1,0 +1,43 @@
+{% extends 'base.html' %}   
+{% block content %} 
+  
+<!-- Header с видеофоном -->
+<header class="bg-dark text-white py-5" style="
+    height: 40vh;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+">   
+    <div class="container text-center" style="position: relative; z-index: 2;">
+        <h1 class="display-4 fw-bold">Вход</h1>
+    </div>
+</header>
+
+   <div class="container">
+       <div class="row">
+              <center>
+                     <div class="col-8">
+                            <br/><br/>
+   <form method="POST" action="{% url 'login' %}">
+    {% csrf_token %}
+    
+  <div class="mb-3">
+    <input type="text" class="form-control" name="username" placeholder="Введите своё имя пользователя">
+   
+  </div>
+  <div class="mb-3">
+    <input type="password" class="form-control" name="password" placeholder="Введите Ваш пароль">
+  </div>
+  <br/><br/>
+  <button type="submit" class="btn btn-secondary">Войти</button>
+</form>
+<br/><br/><br/>
+<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+                     </div>
+              </center>
+       </div>
+   </div>
+      
+{% endblock %}

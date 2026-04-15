@@ -1,0 +1,573 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    
+    <title>{% block title %}TatarBazar - Магазин татарских товаров{% endblock %}</title>
+    <meta name="description" content="{% block description %}Откройте для себя богатство татарской культуры через уникальные национальные товары{% endblock %}">
+    <link rel="manifest" href="{% static 'manifest.json' %}">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="apple-touch-icon" href="{% static 'img/log1.png' %}">
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{% static 'assets/favicon.ico' %}" />
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet" />
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
+    
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    
+    <!-- SweetAlert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- Custom Scripts -->
+    <script src="{% static 'js/scripts.js' %}" defer></script>
+    
+    <!-- Additional Styles -->
+    
+</head>
+
+<body>
+    {% include 'navbar.html' %}
+    {% if messages %}
+<div class="container mt-3">
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+</div>
+{% endif %}
+    <div id="csrf-token" data-token="{{ csrf_token }}"></div>
+    
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>О TatarBazar</h4>
+                    <p>Мы предлагаем широкий выбор традиционных татарских товаров, сохраняя культурное наследие и традиции.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Контакты</h4>
+                    <p><i class="bi bi-envelope"></i> info@tatarbazar.com</p>
+                    <p><i class="bi bi-telephone"></i> +7 (999) 123-45-67</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Следите за нами</h4>
+                    <div class="social-links">
+                        <a href="#" aria-label="Telegram"><i class="bi bi-telegram"></i></a>
+                        <a href="#" aria-label="WhatsApp"><i class="bi bi-whatsapp"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 TatarBazar. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom Scripts -->
+    <script>
+        // CSRF Token setup for AJAX requests
+function getCSRFToken() {
+    const tokenElement = document.getElementById('csrf-token');
+    return tokenElement ? tokenElement.dataset.token : '';
+}
+
+// Глобальная настройка для всех AJAX-запросов
+$.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", getCSRFToken());
+        }
+    }
+});
+        // Initialize tooltips and popovers
+        document.addEventListener('DOMContentLoaded', function() {
+            // Bootstrap tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+            
+            var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+            var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+                return new bootstrap.Popover(popoverTriggerEl);
+            });
+        });
+    </script>
+    
+    {% block extra_scripts %}{% endblock %}
+
+
+    <button id="chat-toggle" class="chat-toggle-btn">
+    💬 Стилист
+</button>
+
+<div id="chat-window" class="chat-window">
+    <div class="chat-header">
+        <span>Татарский стилист</span>
+        <button id="chat-close" class="chat-close-btn">✖</button>
+    </div>
+    <div id="chat-messages" class="chat-messages">
+        <div class="message assistant">
+            <strong>Стилист:</strong> Здравствуйте! Я помогу вам подобрать гармоничный образ в татарском стиле. Для какого события вы ищете образ?
+        </div>
+    </div>
+    <div class="chat-input-area">
+        <input type="text" id="chat-input" placeholder="Напишите ваш вопрос..." class="chat-input">
+        <button id="chat-send" class="chat-send-btn">Отправить</button>
+    </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const toggleBtn = document.getElementById('chat-toggle');
+    const chatWindow = document.getElementById('chat-window');
+    const closeBtn = document.getElementById('chat-close');
+    const sendBtn = document.getElementById('chat-send');
+    const chatInput = document.getElementById('chat-input');
+    const chatMessages = document.getElementById('chat-messages');
+    
+    // Генерация session_id
+    function getSessionId() {
+        let sessionId = localStorage.getItem('chat_session_id');
+        if (!sessionId) {
+            sessionId = 'chat_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            localStorage.setItem('chat_session_id', sessionId);
+        }
+        return sessionId;
+    }
+    
+    // Сохранение чата в localStorage
+// Сохранение чата в localStorage
+function saveChatToLocalStorage() {
+    const messages = [];
+    document.querySelectorAll('#chat-messages .message').forEach(msg => {
+        // Пропускаем стандартное приветственное сообщение
+        const msgText = msg.textContent.trim();
+        if (msgText === 'Стилист: Здравствуйте! Я помогу вам подобрать гармоничный образ в татарском стиле. Для какого события вы ищете образ?') {
+            return;
+        }
+        
+        const isUser = msg.classList.contains('user');
+        const text = msgText.replace(/^(Вы|Стилист):\s*/, '');
+        const html = msg.innerHTML;
+        messages.push({
+            role: isUser ? 'user' : 'assistant',
+            content: text,
+            html: html
+        });
+    });
+    
+    // Сохраняем максимум 20 последних сообщений
+    const recentMessages = messages.slice(-20);
+    localStorage.setItem('chat_history', JSON.stringify(recentMessages));
+    console.log('Чат сохранен в localStorage, сообщений:', recentMessages.length);
+}
+    
+    // Загрузка чата из localStorage
+function loadChatFromLocalStorage() {
+    const saved = localStorage.getItem('chat_history');
+    if (saved) {
+        try {
+            const messages = JSON.parse(saved);
+            
+            // Очищаем все сообщения
+            chatMessages.innerHTML = '';
+            
+            // Добавляем приветственное сообщение ТОЛЬКО если нет других сообщений
+            if (messages.length === 0) {
+                const welcomeMsg = document.createElement('div');
+                welcomeMsg.className = 'message assistant';
+                welcomeMsg.innerHTML = '<strong>Стилист:</strong> Здравствуйте! Я помогу вам подобрать гармоничный образ в татарском стиле. Для какого события вы ищете образ?';
+                chatMessages.appendChild(welcomeMsg);
+            }
+            
+            // Добавляем сохраненные сообщения
+            messages.forEach(msg => {
+                const msgDiv = document.createElement('div');
+                msgDiv.className = 'message ' + (msg.role === 'user' ? 'user' : 'assistant');
+                msgDiv.innerHTML = msg.html;
+                chatMessages.appendChild(msgDiv);
+            });
+            
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            console.log('Чат загружен из localStorage, сообщений:', messages.length);
+        } catch (e) {
+            console.error('Ошибка загрузки чата:', e);
+            // Если ошибка, показываем приветственное сообщение
+            showWelcomeMessage();
+        }
+    } else {
+        // Если нет сохраненных данных, показываем приветственное сообщение
+        showWelcomeMessage();
+    }
+}
+
+function showWelcomeMessage() {
+    // Проверяем, нет ли уже приветственного сообщения
+    const existingWelcome = chatMessages.querySelector('.message.assistant');
+    if (!existingWelcome) {
+        const welcomeMsg = document.createElement('div');
+        welcomeMsg.className = 'message assistant';
+        welcomeMsg.innerHTML = '<strong>Стилист:</strong> Здравствуйте! Я помогу вам подобрать гармоничный образ в татарском стиле. Для какого события вы ищете образ?';
+        chatMessages.appendChild(welcomeMsg);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+}
+    // Показать/скрыть чат
+    toggleBtn.addEventListener('click', function() {
+        if (chatWindow.style.display === 'flex') {
+            chatWindow.style.display = 'none';
+        } else {
+            chatWindow.style.display = 'flex';
+            chatInput.focus();
+            
+            // Загружаем историю при открытии
+            loadChatFromLocalStorage();
+        }
+    });
+    
+    closeBtn.addEventListener('click', function() {
+        chatWindow.style.display = 'none';
+        saveChatToLocalStorage();
+    });
+    
+    // Добавление сообщения
+    function addMessage(sender, text, isUser, products = null) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'message ' + (isUser ? 'user' : 'assistant');
+        
+        if (isUser) {
+            messageDiv.innerHTML = '<strong>Вы:</strong> ' + text;
+        } else {
+            messageDiv.innerHTML = '<strong>Стилист:</strong> ' + text;
+        }
+        
+        chatMessages.appendChild(messageDiv);
+        
+        // Показываем товары если есть
+        if (products && products.length > 0) {
+            setTimeout(() => showProducts(products), 100);
+        }
+        
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        
+        // Сохраняем в localStorage
+        setTimeout(saveChatToLocalStorage, 100);
+    }
+
+
+
+function showProducts(products) {
+   // console.log('Показываю товары (showProducts вызвана):', products.length);
+    // console.log('Данные товаров:', products);
+    
+    if (!products || !Array.isArray(products) || products.length === 0) {
+        console.log('Нет товаров для отображения');
+        return;
+    }
+    
+    // Создаем контейнер для товаров
+    const productsContainer = document.createElement('div');
+    productsContainer.className = 'suggested-products';
+    productsContainer.style.cssText = `
+        margin-top: 15px;
+        padding: 12px;
+        background: #f8f9fa;
+        border-radius: 10px;
+        border: 1px solid #dee2e6;
+        max-width: 100%;
+        animation: fadeIn 0.5s ease;
+    `;
+    
+    // Заголовок
+    const title = document.createElement('div');
+    title.textContent = 'Подобранные товары:';
+    title.style.cssText = `
+        font-weight: bold;
+        margin-bottom: 12px;
+        color: #2c7a51;
+        font-size: 14px;
+    `;
+    productsContainer.appendChild(title);
+    
+    // Сетка для карточек
+    const grid = document.createElement('div');
+    grid.style.cssText = `
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    `;
+    
+    // Добавляем карточки товаров
+    products.forEach((product, index) => {
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.style.cssText = `
+            background: white;
+            border-radius: 8px;
+            padding: 10px;
+            border: 1px solid #e9ecef;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        `;
+        
+        card.onmouseover = () => {
+            card.style.transform = 'translateY(-2px)';
+            card.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
+        };
+        
+        card.onmouseout = () => {
+            card.style.transform = 'translateY(0)';
+            card.style.boxShadow = 'none';
+        };
+        
+        card.onclick = () => {
+            window.open(product.url, '_blank');
+        };
+        
+        // Изображение товара
+        const imgContainer = document.createElement('div');
+        imgContainer.style.cssText = `
+            height: 90px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+            overflow: hidden;
+        `;
+        
+        const img = document.createElement('img');
+        img.src = product.image_url || '/static/img/no-image.jpg';
+        img.alt = product.name;
+        img.style.cssText = `
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        `;
+        
+        // Если изображение не загружается
+        img.onerror = function() {
+            this.onerror = null; // Предотвращаем бесконечный цикл
+            this.src = 'https://via.placeholder.com/100x100/2c7a51/ffffff?text=Товар';
+            console.log('Ошибка загрузки изображения для товара:', product.name);
+        };
+        
+        imgContainer.appendChild(img);
+        
+        // Название товара
+        const name = document.createElement('div');
+        name.textContent = product.name.length > 20 ? 
+            product.name.substring(0, 20) + '...' : product.name;
+        name.style.cssText = `
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #212529;
+            line-height: 1.3;
+        `;
+        
+        // Цена
+        const price = document.createElement('div');
+        if (product.sale_price && product.is_sale) {
+            price.innerHTML = `
+                <span style="color: #dc3545; font-weight: bold; font-size: 13px;">
+                    ${product.sale_price} ₽
+                </span>
+                <span style="text-decoration: line-through; color: #6c757d; font-size: 11px; margin-left: 5px;">
+                    ${product.price} ₽
+                </span>
+            `;
+        } else {
+            price.textContent = product.price + ' ₽';
+            price.style.cssText = 'font-size: 13px; color: #2c7a51; font-weight: bold; margin-top: auto;';
+        }
+        
+        // Собираем карточку
+        card.appendChild(imgContainer);
+        card.appendChild(name);
+        card.appendChild(price);
+        
+        grid.appendChild(card);
+    });
+    
+    productsContainer.appendChild(grid);
+    
+    // Добавляем контейнер в чат
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'message assistant';
+    messageDiv.appendChild(productsContainer);
+    chatMessages.appendChild(messageDiv);
+    
+    // Прокручиваем вниз
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+    
+    console.log('Товары отображены');
+}
+    
+    // Отправка сообщения
+    function sendMessage() {
+        const userText = chatInput.value.trim();
+        if (!userText) return;
+
+        addMessage('Вы', userText, true);
+        chatInput.value = '';
+        
+        chatInput.disabled = true;
+        sendBtn.disabled = true;
+        sendBtn.textContent = 'Отправка...';
+
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || getCookie('csrftoken');
+        const sessionId = getSessionId();
+        
+        fetch('/assistant/chat/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({ 
+                message: userText,
+                session_id: sessionId 
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Ответ от AI:', data);
+            
+            if (data.reply) {
+                addMessage('Стилист', data.reply, false, data.suggested_products);
+            }
+            
+            if (data.style_advice) {
+                const adviceDiv = document.createElement('div');
+                adviceDiv.className = 'message assistant style-advice';
+                adviceDiv.style.cssText = 'background-color: #fff3cd; border-left: 4px solid #ffc107;';
+                chatMessages.appendChild(adviceDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            if (data.error) {
+                addMessage('Стилист', 'Ошибка: ' + data.error, false);
+            }
+        })
+        .catch(error => {
+            console.error('Ошибка:', error);
+            addMessage('Стилист', 'Ошибка соединения', false);
+        })
+        .finally(() => {
+            chatInput.disabled = false;
+            sendBtn.disabled = false;
+            sendBtn.textContent = 'Отправить';
+            chatInput.focus();
+        });
+    }
+    
+    // Вспомогательная функция для получения куки
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    // Очистка истории
+    function clearChatHistory() {
+        if (confirm('Очистить всю историю чата?')) {
+            fetch('/assistant/clear/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'history cleared') {
+                    // Очищаем localStorage
+                    localStorage.removeItem('chat_history');
+                    
+                    // Оставляем только приветственное сообщение
+                    chatMessages.innerHTML = '';
+                    const welcomeMsg = document.createElement('div');
+                    welcomeMsg.className = 'message assistant';
+                    welcomeMsg.innerHTML = '<strong>Стилист:</strong> Сәлам! Я помогу вам подобрать гармоничный образ в татарском стиле. Для какого события вы ищете образ?';
+                    chatMessages.appendChild(welcomeMsg);
+                    
+                    console.log('Чат очищен');
+                }
+            });
+        }
+    }
+    
+    // Назначаем обработчики
+    sendBtn.addEventListener('click', sendMessage);
+    
+    chatInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
+    
+    // Автоматически загружаем историю при загрузке страницы
+    loadChatFromLocalStorage();
+    
+    // Сохраняем при уходе со страницы
+    window.addEventListener('beforeunload', saveChatToLocalStorage);
+});
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/static/js/sw.js')
+        .then(function(registration) {
+            console.log('ServiceWorker зарегистрирован');
+        })
+        .catch(function(error) {
+            console.log('ServiceWorker не зарегистрирован:', error);
+        });
+}
+</script>
+
+
+</body>
+</html>

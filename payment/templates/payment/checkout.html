@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+        <!-- Header-->
+    
+    <header class="bg-dark text-white py-5" style="
+        height: 40vh;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    ">   
+        <div class="container text-center" style="position: relative; z-index: 2;">
+            <h1 class="display-4 fw-bold">Оформление заказа</h1>
+        </div>
+    </header>
+        <br/>
+        <div class="container">
+            <div class="row">
+                
+             <div class="col-md-6 offset-md-3">
+                <div class="card">
+                    <div class="card-header">
+                      Информация о заказе
+                    </div>
+                    <div class="card-body">
+            {% for product in cart_products %}
+                {{ product.name }}:
+                    {% if product.is_sale %}
+                        {{ product.sale_price }} руб
+                        {% else %}
+                        {{ product.price }} руб
+                    {% endif %}
+                    <br/>
+                    <small >Количество: 
+                    {% for key, value in quantities.items %}
+                     {% if key == product.id|slugify %}
+                            {{ value }}
+                    {% endif %}
+                {% endfor %}</small>
+  <br/><br/><br/>
+
+            {% endfor %}
+          Итого: {{ totals }} руб
+          <br/><br/>
+          <a href="{% url 'cart_summary' %}" class="btn btn-sm btn-outline-secondary">Обновить элементы</a>
+                    </div>
+                  </div>
+    <br/><br/> 
+    <div class="card">
+        <div class="card-header">
+          Информация о доставке
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{% url 'billing_info' %}">
+         {% csrf_token %}
+                {{ shipping_form.as_p }}
+        </div>
+      </div>
+      <br/><br/> 
+      <button type="submit" class="btn btn-secondary">Продолжить оформление</button>
+    </form>
+      <br/><br/> </div>
+            </div>
+        </div>
+
+
+
+     
+
+
+{% endblock %}

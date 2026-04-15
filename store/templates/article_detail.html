@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Главная</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'historical_articles' %}">Татарская культура</a></li>
+            <li class="breadcrumb-item active">{{ article.title }}</li>
+        </ol>
+    </nav>
+    
+    <div class="row">
+        <!-- Статья -->
+        <div class="col-md-8">
+            <article class="card shadow">
+                {% if article.main_image %}
+                <img src="{{ article.main_image.url }}" 
+                     class="card-img-top" 
+                     alt="{{ article.title }}"
+                     style="max-height: 400px; object-fit: cover;">
+                {% endif %}
+                
+                <div class="card-body">
+                    <!-- Заголовок -->
+                    <div class="mb-4">
+                        <h1 class="display-5">{{ article.title }}</h1>
+                        <span class="badge bg-primary">{{ article.get_article_type_display }}</span>
+                    </div>
+                    
+                    <!-- Краткое описание -->
+                    <div class="lead mb-4 p-3 bg-light rounded">
+                        {{ article.short_description }}
+                    </div>
+                    
+                    <!-- Текст статьи -->
+                    <div class="article-content">
+                        {{ article.content|linebreaks }}
+                    </div>
+                </div>
+            </article>
+            
+            <!-- Связанные товары -->
+            {% if article.related_products.exists %}
+            <div class="card mt-4">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-shopping-bag"></i> Связанные товары
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for product in article.related_products.all|slice:":4" %}
+                        <div class="col-md-3 col-6 mb-3">
+                            <a href="{% url 'product' product.id %}" class="text-decoration-none">
+                                <div class="card h-100">
+                                    <img src="{{ product.image.url }}" 
+                                         class="card-img-top" 
+                                         alt="{{ product.name }}"
+                                         style="height: 150px; object-fit: cover;">
+                                    <div class="card-body p-2">
+                                        <h6 class="card-title mb-1">{{ product.name|truncatechars:25 }}</h6>
+                                        <p class="card-text text-success mb-0">
+                                            {{ product.price }} ₽
+                                        </p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Боковая колонка -->
+        <div class="col-md-4">
+            <!-- Похожие статьи -->
+            {% if similar_articles %}
+            <div class="card mb-4">
+                <div class="card-header bg-secondary text-white">
+                    <h4 class="mb-0">Похожие статьи</h4>
+                </div>
+                <div class="list-group list-group-flush">
+                    {% for similar_article in similar_articles %}
+                    <a href="{% url 'article_detail' similar_article.id %}" 
+                       class="list-group-item list-group-item-action">
+                        <div class="d-flex justify-content-between">
+                            <span>{{ similar_article.title|truncatechars:30 }}</span>
+                            <small class="text-muted">{{ similar_article.created_at|date:"d.m" }}</small>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            
+         
+        </div>
+    </div>
+</div>
+
+<style>
+.article-content {
+    line-height: 1.8;
+    font-size: 1.1rem;
+}
+
+.article-content p {
+    margin-bottom: 1.5rem;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container">
+<br/>
+
+<div class="card mb-3">
+  <div class="row g-0">
+    <div class="col-md-4">
+      <div style="width: 100%; height: 0; padding-bottom: 133.33%; position: relative; overflow: hidden;">
+        <img src="{{ product.image.url }}" 
+             class="img-fluid rounded-start" 
+             alt="{{ product.name }}"
+             style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
+      </div>
+    </div>
+    <div class="col-md-8">
+      <div class="card-body">
+        <center>
+        <h5 class="card-title">{{ product.name }}</h5>
+        <br/>
+        <p class="card-text justified">{{ product.description }}</p>
+        
+        {% if product.is_sale %}
+        <div class="d-flex justify-content-center small text-warning mb-2">
+                <div class="bi-star-fill"></div>
+                &nbsp;&nbsp;Распродажа!&nbsp;&nbsp;
+                <div class="bi-star-fill"></div>
+                </div>
+
+                <!-- Product price-->
+                <strike>
+                {{ product.price }} руб
+                </strike>
+                &nbsp;
+                {{ product.sale_price }} руб
+
+        {% else %}
+            {{ product.price }} руб
+            
+        {% endif %}
+            <br/><br/>
+            
+            <div class="row justify-content-center align-items-center">
+              
+                <div class="col-auto">
+                    <input type="number" class="form-control text-center" id="qty-cart" value="1" min="1" max="50" style="width: 60px;">
+                </div>
+               
+            </div>
+            
+            <br/><br/>
+        <a href="{% url 'home'%}" class="btn btn-secondary">Главная</a>
+        <button type="button" value="{{ product.id }}" class="btn btn-secondary" id="add-cart">Добавить в корзину</button>
+<!-- Проверяем, есть ли статьи связанные с этим товаром -->
+{% if product.historicalarticle_set.exists %}
+    {% with article=product.historicalarticle_set.first %}
+    <a href="{% url 'article_detail' article.id %}" 
+       class="btn custom-article-btn">
+        <i class="fas fa-book"></i> Читать статью
+    </a>
+    {% endwith %}
+{% endif %}
+
+<style>
+.custom-article-btn {
+    color: #1e5639 !important; /* Темно-зеленый цвет текста */
+    background-color: transparent !important;
+    border: 2px solid #1e5639 !important; /* Рамка темно-зеленого цвета */
+    padding: 8px 16px !important;
+    border-radius: 8px !important;
+    text-decoration: none !important;
+    font-weight: 600 !important;
+    transition: all 0.3s ease !important;
+    display: inline-block !important;
+    margin-left: 10px !important;
+}
+
+.custom-article-btn:hover {
+    color: white !important;
+    background-color: #1e5639 !important;
+    border-color: #1e5639 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(30, 86, 57, 0.3);
+}
+
+.custom-article-btn i {
+    margin-right: 8px;
+}
+</style>
+
+
+
+
+<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+
+<script>
+$(document).ready(function() {
+    $('#add-cart').click(function(e) {
+        e.preventDefault();
+
+        let productId = $(this).val();
+        let productQty = $('#qty-cart').val();
+        let csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
+
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'cart_add' %}",
+            data: {
+                product_id: productId,
+                product_qty: productQty,
+                csrfmiddlewaretoken: csrfToken,
+                action: 'post'
+            },
+            success: function(response) {
+                $('#cart_quantity').text(response.cart_quantity);
+                console.log('Добавление выполнено');
+
+                Swal.fire({
+    icon: 'success',
+    title: 'Товар добавлен в корзину',
+    showConfirmButton: false,
+    timer: 1500,
+    toast: false // отключает "вскраю"
+});
+
+            },
+            error: function(xhr) {
+                console.error("Ошибка:", xhr.responseText);
+            }
+        });
+    });
+});
+
+</script>
+{% endblock %}

@@ -1,0 +1,226 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load extras %}
+{% block content %}
+
+<section class="hero-section">
+    <div class="hero-container">
+        <div class="hero-content">
+            <h1 class="hero-title">Добро пожаловать в TatarBazar</h1>
+            <p class="hero-subtitle">Откройте для себя богатство татарской культуры через уникальные национальные товары</p>
+            <div class="hero-buttons">
+                <a href="{% url 'catalog' %}" class="btn btn-primary">Смотреть товары</a>
+                <a href="{% url 'historical_articles' %}" class="btn btn-primary">Читать статьи</a>
+                <a href="{% url 'about' %}" class="btn btn-primary">Узнать больше</a>
+                <div style="position: fixed; bottom: 10px; left: 10px; z-index: 9999; background: white; padding: 5px; border-radius: 10px;">
+    <img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data={{ request.build_absolute_uri }}" alt="QR">
+</div>
+            </div>
+
+        </div>
+        <div class="hero-image">
+            <img src="{% static 'img/log1.png' %}" alt="TatarBazar Logo">
+        </div>
+        
+    </div>
+</section>
+
+
+
+<section class="main-slider-section">
+    <div class="section-header">
+        <h2>Популярные образы</h2>
+        <p>Вдохновляйтесь стилем знаменитостей</p>
+    </div>
+    
+    <div class="slider-container">
+        <div class="slider-track">
+            <!-- Slide 1: Костюм -->
+            <div class="slider-slide">
+                <div class="slide-image">
+                    <img src="{% static 'img/костюм2.jpg' %}" alt="Мужской костюм" loading="lazy">
+                </div>
+                <div class="slide-content">
+                    <h3>Хочешь костюм как у Раиса?</h3>
+                    <p>Элегантный мужской костюм в национальном стиле</p>
+                    {% with product=products|get_item:"Пиджак Мужской" %}
+                    {% if product %}
+                    <a href="{% url 'product' product.id %}" class="product-preview">
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy">
+                        <div class="preview-info">
+                            <h4>{{ product.name }}</h4>
+                            <p class="price">{{ product.price }} ₽</p>
+                        </div>
+                    </a>
+                    {% endif %}
+                    {% endwith %}
+                </div>
+            </div>
+
+            <!-- Серьги -->
+            <div class="slider-slide">
+                <div class="slide-image">
+                    <img src="{% static 'img/дышать.jpg' %}" alt="Женские серьги" loading="lazy">
+                </div>
+                <div class="slide-content">
+                    <h3>Украшения для настоящих красавиц</h3>
+                    <p>Традиционные татарские украшения</p>
+                    {% with product=products|get_item:"Серьги \"Алка\" из латуни" %}
+                    {% if product %}
+                    <a href="{% url 'product' product.id %}" class="product-preview">
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy">
+                        <div class="preview-info">
+                            <h4>{{ product.name }}</h4>
+                            <p class="price">{{ product.price }} ₽</p>
+                        </div>
+                    </a>
+                    {% endif %}
+                    {% endwith %}
+                </div>
+            </div>
+
+            <!-- Изю -->
+            <div class="slider-slide">
+                <div class="slide-image">
+                    <img src="{% static 'img/саида1.jpg' %}" alt="Женский образ" loading="lazy">
+                </div>
+                <div class="slide-content">
+                    <h3>Стиль как у Саиды</h3>
+                    <p>Элегантные женские наряды</p>
+                    {% with product=products|get_item:"Изю" %}
+                    {% if product %}
+                    <a href="{% url 'product' product.id %}" class="product-preview">
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy">
+                        <div class="preview-info">
+                            <h4>{{ product.name }}</h4>
+                            <p class="price">{{ product.price }} ₽</p>
+                        </div>
+                    </a>
+                    {% endif %}
+                    {% endwith %}
+                </div>
+            </div>
+
+
+            <!-- Корсет -->
+            <div class="slider-slide">
+                <div class="slide-image">
+                    <img src="{% static 'img/defne.jpg' %}" alt="Корсет" loading="lazy">
+                </div>
+                <div class="slide-content">
+                    <h3>Сказочные мотивы от Defne</h3>
+                    <p>Современная мода в этно-стиле</p>
+                    {% with product=products|get_item:"Корсет \"Хәзинә\"" %}
+                    {% if product %}
+                    <a href="{% url 'product' product.id %}" class="product-preview">
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy">
+                        <div class="preview-info">
+                            <h4>{{ product.name }}</h4>
+                            <p class="price">{{ product.price }} ₽</p>
+                        </div>
+                    </a>
+                    {% endif %}
+                    {% endwith %}
+                </div>
+            </div>
+
+
+        </div>
+        
+        <div class="slider-nav">
+            <button class="nav-btn prev-btn" aria-label="Предыдущий слайд">
+                <i class="bi bi-chevron-left"></i>
+            </button>
+            <button class="nav-btn next-btn" aria-label="Следующий слайд">
+                <i class="bi bi-chevron-right"></i>
+            </button>
+        </div>
+        
+        <div class="slider-dots"></div>
+    </div>
+</section>
+
+<!-- Categories Section -->
+<section class="categories-section">
+    <div class="section-header">
+        <h2>Категории товаров</h2>
+        <p>Найдите то, что ищете</p>
+    </div>
+    
+    <div class="categories-grid">
+        <a href="{% url 'catalog' %}?category=одежда" class="category-card">
+            <div class="category-icon">
+                <i class="bi bi-person-standing-dress"></i>
+            </div>
+            <h3>Одежда</h3>
+            <p>Традиционная и современная татарская одежда</p>
+        </a>
+        
+        <a href="{% url 'catalog' %}?category=украшения" class="category-card">
+            <div class="category-icon">
+                <i class="bi bi-gem"></i>
+            </div>
+            <h3>Украшения</h3>
+            <p>Национальные украшения и аксессуары</p>
+        </a>
+        
+        <a href="{% url 'catalog' %}?category=сувениры" class="category-card">
+            <div class="category-icon">
+                <i class="bi bi-gift"></i>
+            </div>
+            <h3>Сувениры</h3>
+            <p>Памятные подарки и сувениры</p>
+        </a>
+        
+        <a href="{% url 'catalog' %}?category=домашний-текстиль" class="category-card">
+            <div class="category-icon">
+                <i class="bi bi-house-heart"></i>
+            </div>
+            <h3>Домашний текстиль</h3>
+            <p>Красивые ткани и изделия для дома</p>
+        </a>
+    </div>
+</section>
+
+
+<!-- Brands Section -->
+<section class="brands-section">
+    <div class="section-header">
+        <h2>Наши бренды</h2>
+        <p>Проверенные производители качественных товаров</p>
+    </div>
+    
+    <div class="brands-grid">
+        <div class="brand-card">
+            <img src="{% static 'img/brand (1).jpg' %}" alt="Бренд 1" loading="lazy">
+        </div>
+        <div class="brand-card">
+            <img src="{% static 'img/brand (2).jpg' %}" alt="Бренд 2" loading="lazy">
+        </div>
+        <div class="brand-card">
+            <img src="{% static 'img/brand (3).jpg' %}" alt="Бренд 3" loading="lazy">
+        </div>
+        <div class="brand-card">
+            <img src="{% static 'img/brand (4).jpg' %}" alt="Бренд 4" loading="lazy">
+        </div>
+        <div class="brand-card">
+            <img src="{% static 'img/brand (5).jpg' %}" alt="Бренд 5" loading="lazy">
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="cta-container">
+        <div class="cta-content">
+            <h2>Готовы начать покупки?</h2>
+            <p>Откройте для себя мир татарских товаров прямо сейчас</p>
+            <div class="cta-buttons">
+                <a href="{% url 'catalog' %}" class="btn btn-primary">Перейти в каталог</a>
+                <a href="{% url 'register' %}" class="btn btn-primary">Зарегистрироваться</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

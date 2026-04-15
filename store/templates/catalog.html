@@ -1,0 +1,259 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<!-- Header с видеофоном -->
+<header class="bg-dark text-white py-5" style="
+    height: 50vh;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    left: 0;
+">
+    <video autoplay muted loop playsinline style="
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: 0;
+        margin: 0;
+        padding: 0;
+    ">
+        <source src="{% static 'img/about.mp4' %}" type="video/mp4">
+    </video>
+    
+    <div style="
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.4);
+        z-index: 1;
+        margin: 0;
+        padding: 0;
+    "></div>
+    
+    <div class="container text-center" style="position: relative; z-index: 2;">
+        <h1 class="display-4 fw-bold">Товары</h1>
+    </div>
+</header>
+
+<div class="container-fluid mt-3">
+    <div class="row">
+        <!-- Левая панель фильтров -->
+        <div class="col-lg-2">
+            <div class="filter-panel">
+                <h5 class="text-gold">Фильтр товаров</h5>
+                <form method="get" action="{% url 'catalog' %}" id="priceFilterForm">
+                    <!-- Фильтр по цене -->
+                    <div class="mb-3">
+                        <label class="form-label">Цена</label>
+                        <div class="d-flex align-items-center gap-2">
+                            <input type="number" 
+                                   class="form-control w-auto" 
+                                   style="min-width: 77px;"
+                                   name="min_price" 
+                                   id="minPriceInput" 
+                                   placeholder="От" 
+                                   value="{{ selected_min_price }}" 
+                                   min="{{ min_price }}">
+                            <span class="flex-shrink-0">—</span>
+                            <input type="number" 
+                                   class="form-control w-auto" 
+                                   style="min-width: 77px;"
+                                   name="max_price" 
+                                   id="maxPriceInput" 
+                                   placeholder="До" 
+                                   value="{{ selected_max_price }}" 
+                                   max="{{ max_price }}">
+                        </div>
+                        <div class="text-muted small mt-1">
+                            Диапазон: {{ min_price }}₽ — {{ max_price }}₽
+                        </div>
+                    </div>
+                    
+                    <!-- Категории -->
+                    <div class="mb-3">
+                        <label class="form-label" onclick="toggleCategory()" style="cursor:pointer;">
+                            Категории
+                        </label>
+                        <div id="categoryList">
+                        {% for category in categories %}
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="category"
+                                       value="{{ category.name }}" id="cat{{ forloop.counter }}"
+                                       {% if category.name in selected_categories %}checked{% endif %}>
+                                <label class="form-check-label" for="cat{{ forloop.counter }}">{{ category.name }}</label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    </div>
+                    
+                    <!-- Фильтр по брендам -->
+                    <div class="mb-3">
+                        <label class="form-label" onclick="toggleBrands()" style="cursor:pointer;">
+                            Бренды
+                        </label>
+                        <div id="brandList">
+                            {% for brand in brands %}
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="brand"
+                                           value="{{ brand.brand_name }}"
+                                           {% if brand.brand_name in selected_brands %}checked{% endif %}>
+                                    <label class="form-check-label">{{ brand.brand_name }}</label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-success w-100">Применить</button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="col-lg-10">
+            <div class="row g-4">
+                {% for product in products %}
+                <div class="col-lg-3 col-md-4 col-sm-6 col-6">
+                    <div class="card h-100 border-0 shadow-sm">
+                        {% if product.is_sale %}
+                        <div class="badge bg-danger text-white position-absolute" style="top: 0.5rem; right: 0.5rem; z-index: 1;">Скидка</div>
+                        {% endif %}
+                        
+                        <div style="position: relative; width: 100%; padding-top: 100%; overflow: hidden;">
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}"
+                                 style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                        
+                        <div class="card-body text-center">
+                            <h5 class="card-title fw-bold" style="font-size: 14px; min-height: 40px;">{{ product.name }}</h5>
+                            {% if product.is_sale %}
+                                <p class="mb-1">
+                                    <strike class="text-muted">{{ product.price }}₽</strike> 
+                                    <span class="text-danger fw-bold">{{ product.sale_price }}₽</span>
+                                </p>
+                            {% else %}
+                                <p class="mb-1 fw-bold">{{ product.price }}₽</p>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="card-footer bg-transparent border-0 text-center pt-0">
+                            <div class="d-flex justify-content-center align-items-center gap-2 mb-2">
+                                <input type="number" class="form-control text-center qty-input" value="1" min="1" max="50" style="width: 55px;">
+                                <button class="btn btn-success add-to-cart-btn" data-product-id="{{ product.id }}">В корзину</button>
+                            </div>
+                            <a href="{% url 'product' product.id %}" class="btn btn-outline-success btn-sm w-100">Подробнее</a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12 text-center py-5">
+                    <p>Товаров не найдено</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="csrf-token" data-token="{{ csrf_token }}"></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const minPriceInput = document.getElementById('minPriceInput');
+    const maxPriceInput = document.getElementById('maxPriceInput');
+    const form = document.getElementById('priceFilterForm');
+    const minPrice = parseFloat("{{ min_price }}");
+    const maxPrice = parseFloat("{{ max_price }}");
+
+    form.addEventListener('submit', function(e) {
+        let minVal = parseFloat(minPriceInput.value) || minPrice;
+        let maxVal = parseFloat(maxPriceInput.value) || maxPrice;
+        
+        if (minVal < minPrice) minVal = minPrice;
+        if (maxVal > maxPrice) maxVal = maxPrice;
+        if (minVal > maxVal) minVal = maxPrice;
+        
+        minPriceInput.value = minVal;
+        maxPriceInput.value = maxVal;
+    });
+
+    minPriceInput.addEventListener('blur', function() {
+        let value = parseFloat(this.value) || minPrice;
+        if (value < minPrice) value = minPrice;
+        if (value > maxPrice) value = maxPrice;
+        this.value = value;
+    });
+
+    maxPriceInput.addEventListener('blur', function() {
+        let value = parseFloat(this.value) || maxPrice;
+        if (value > maxPrice) value = maxPrice;
+        if (value < minPrice) value = minPrice;
+        this.value = value;
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.add-to-cart-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            const productId = this.dataset.productId;
+            const card = this.closest('.card') || this.parentElement;
+            const qtyInput = card.querySelector('.qty-input');
+            const qty = qtyInput ? qtyInput.value : 1;
+            const csrfToken = document.getElementById('csrf-token').dataset.token;
+            if (!productId) {
+    Swal.fire('Ошибка', 'Нет ID товара', 'error');
+    return;
+}
+            fetch("{% url 'cart_add' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': csrfToken
+                },
+                body: new URLSearchParams({
+                    'product_id': productId,
+                    'product_qty': qty,
+                    'action': 'post'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const cartQuantityElem = document.getElementById('cart_quantity');
+                if (cartQuantityElem) cartQuantityElem.textContent = data.cart_quantity;
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Добавлено в корзину',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            })
+            .catch(error => {
+                Swal.fire('Ошибка', 'Не удалось добавить товар', 'error');
+            });
+        });
+    });
+});
+
+function toggleBrands() {
+    const list = document.getElementById('brandList');
+    if (list) {
+        list.style.display = list.style.display === 'none' ? 'block' : 'none';
+    }
+}
+
+function toggleCategory() {
+    const list = document.getElementById('categoryList');
+    if (list) {
+        list.style.display = list.style.display === 'none' ? 'block' : 'none';
+    }
+}
+</script>
+{% endblock %}

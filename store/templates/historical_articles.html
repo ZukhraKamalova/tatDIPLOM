@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Заголовок -->
+    <div class="text-center mb-5">
+        <h1 class="display-4">Татарская культура</h1>
+        <p class="lead">Сборник статей о традициях, костюмах и искусстве татарского народа</p>
+    </div>
+    
+    <div class="row">
+        <!-- Левая колонка: Навигация -->
+        <div class="col-md-3">
+            <div class="card sticky-top" style="top: 20px;">
+                <div class="card-header bg-dark text-white">
+                    <h4 class="mb-0">Категории</h4>
+                </div>
+                <div class="list-group list-group-flush">
+                    {% for type_code, type_name in article_types %}
+                    <a href="?type={{ type_code }}" 
+                       class="list-group-item list-group-item-action {% if selected_type == type_code %}active{% endif %}">
+                        {{ type_name }}
+                    </a>
+                    {% endfor %}
+                    <a href="{% url 'historical_articles' %}" 
+                       class="list-group-item list-group-item-action {% if not selected_type %}active{% endif %}">
+                        Все статьи
+                        <span class="badge bg-primary float-end">{{ total_articles }}</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Правая колонка: Статьи -->
+        <div class="col-md-9">
+          
+            
+            <!-- Карточки статей -->
+            {% if articles %}
+                <div class="row">
+                    {% for article in articles %}
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100 shadow-sm">
+                            {% if article.main_image %}
+                            <img src="{{ article.main_image.url }}" 
+                                 class="card-img-top" 
+                                 alt="{{ article.title }}"
+                                 style="height: 250px; object-fit: cover;">
+                            {% endif %}
+                            
+                            <div class="card-body">
+                                <h5 class="card-title">{{ article.title }}</h5>
+                                <p class="card-text text-muted">
+                                    {{ article.short_description|truncatechars:150 }}
+                                </p>
+                                
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="badge bg-primary">{{ article.get_article_type_display }}</span>
+                                    <small class="text-muted">
+                                        <i class="far fa-calendar"></i> {{ article.created_at|date:"d.m.Y" }}
+                                    </small>
+                                </div>
+                            </div>
+                            
+                            <div class="card-footer bg-transparent">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <a href="{% url 'article_detail' article.id %}" 
+                                       class="btn btn-outline-primary btn-sm">
+                                        Читать статью
+                                    </a>
+                                    
+                                    {% if article.related_products.count > 0 %}
+                                    <span class="badge bg-info">
+                                        <i class="fas fa-shopping-bag"></i> 
+                                        {{ article.related_products.count }} товаров
+                                    </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-book-open fa-3x text-muted mb-3"></i>
+                    <h3>Статьи не найдены</h3>
+                    <p class="text-muted">В этой категории пока нет статей</p>
+                    <a href="{% url 'historical_articles' %}" class="btn btn-primary">
+                        Вернуться ко всем статьям
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

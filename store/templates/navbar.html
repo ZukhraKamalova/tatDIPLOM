@@ -1,0 +1,112 @@
+{% load static %}
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<div class="container">
+            <div class="navbar-brand">
+            <a href="{% url 'home' %}" class="brand-link">
+                <img src="{% static 'img/log1.png' %}" alt="TatarBazar" class="brand-logo" loading="lazy">
+                <span class="brand-text">ТатарБазар</span>
+            </a>
+        </div>
+        
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="{% url 'home' %}">
+                        <i class="bi bi-house"></i>
+                        <span>Главная</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'catalog' %}">
+                        <i class="bi bi-grid"></i>
+                        <span>Товары</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'about' %}">
+                        <i class="bi bi-info-circle"></i>
+                        <span>О нас</span>
+                    </a>
+                </li>
+
+                {% if user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle"></i>
+                            <span>Профиль</span>
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="{% url 'update_user' %}">
+                                <i class="bi bi-person"></i> Профиль пользователя
+                            </a></li>
+                            <li><hr class="dropdown-divider" /></li>
+                            <li><a class="dropdown-item" href="{% url 'update_info' %}">
+                                <i class="bi bi-gear"></i> Информация о пользователе
+                            </a></li>
+                        </ul>
+                    </li>
+
+                    {% if user.is_superuser %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-box-seam"></i>
+                                <span>Заказы</span>
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="{% url 'shipped_dash' %}">
+                                    <i class="bi bi-check-circle"></i> Отправленные заказы
+                                </a></li>
+                                <li><hr class="dropdown-divider" /></li>
+                                <li><a class="dropdown-item" href="{% url 'not_shipped_dash' %}">
+                                    <i class="bi bi-clock"></i> Неотправленные заказы
+                                </a></li>
+                            </ul>
+                        </li>
+                    {% endif %}
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}">
+                            <i class="bi bi-box-arrow-right"></i>
+                            <span>Выход</span>
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">
+                            <i class="bi bi-box-arrow-in-right"></i>
+                            <span>Вход</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'register' %}">
+                            <i class="bi bi-person-plus"></i>
+                            <span>Регистрация</span>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+            
+            <!-- Поисковая строка -->
+            <form class="search-form me-3" method="POST" action="{% url 'search' %}">
+                {% csrf_token %}
+                <div class="search-container">
+                    <input type="text" class="search-input" placeholder="Поиск товаров..." name="searched" aria-label="Search">
+                    <button class="search-btn" type="submit">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+            </form>
+            
+            <a href="{% url 'cart_summary' %}" class="cart-btn">
+                <i class="bi bi-cart-fill"></i>
+                <span class="cart-text">Корзина</span>
+                <span class="cart-badge" id="cart_quantity">{{ cart|length }}</span>
+            </a>
+        </div>
+    </div>
+</nav>

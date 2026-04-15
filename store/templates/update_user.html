@@ -1,0 +1,35 @@
+{% extends 'base.html' %}   
+{% block content %} 
+    <!-- Header-->
+    <header class="bg-dark text-white py-5" style="
+        height: 40vh;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    ">   
+        <div class="container text-center" style="position: relative; z-index: 2;">
+            <h1 class="display-4 fw-bold">Обновить профиль</h1>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <br/><br/>
+                <form method="POST" action="{% url 'update_user' %}">
+                    {% csrf_token %}
+                    {{ user_form.as_p }}
+                    {{ password_form.as_p }}  
+                    <br/><br/>
+                    <button type="submit" class="btn btn-secondary">
+                        Обновить профиль
+                    </button>
+                </form>
+
+                <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+            </div>
+        </div>
+    </div>
+{% endblock %}
