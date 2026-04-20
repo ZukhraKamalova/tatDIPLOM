@@ -22,17 +22,10 @@ body{
     background-repeat: no-repeat;
     background-size: cover;
 }
-section,
-.categories-section,
-.brands-section,
-.cta-section,
-.main-slider-section {
-    background: #fff;
-}
 .main{
     width: 85vw;
     background: #fff;
-    box-shadow: 0 2px 6px 0 rgb(0 0 0 / 10%);
+    box-shadow: 0 2px 6 px 0 rgb(0 0 0 / 10%);
     margin: 1rem auto;
     margin-top: 10rem;
     padding: 2%;
@@ -200,7 +193,7 @@ header.scrolled{
 .navbar a{
     margin: 0 1 rem;
     font-size: 1 rem;
-    color: #fff !important;
+    color: #000;
     text-transform: uppercase;
 }
 .navbar a:hover{
@@ -213,7 +206,7 @@ header.scrolled{
     margin-left: 1rem;
     font-size: 1.5rem;
     cursor: pointer;
-    color: #fff !important;
+    color: #000!important;
 }
 #menu-btn{
     display: none;
@@ -1306,53 +1299,4 @@ footer .inner-footer .card.social-links i:hover {
     .product-grid {
         grid-template-columns: 1fr !important;
     }
-}
-@media (max-width: 768px) {
-    .slider-slide {
-        height: auto !important;
-    }
-
-    .slider-slide img {
-        max-height: 200px;
-    }
-}
-@media (max-width: 768px) {
-    .navbar-collapse {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .search-form,
-    .cart-btn {
-        width: 100%;
-    }
-}
-.hero-content,
-.hero-image {
-    width: 100%;
-}
-/* FIX MOBILE */
-body {
-    background: #f9f9f9 !important;
-}
-
-main {
-    background: #fff;
-}
-
-section {
-    background: #fff;
-}
-
-.slider-slide {
-    height: auto !important;
-}
-
-.navbar a {
-    color: #fff !important;
-}
-
-.navbar-collapse {
-    flex-direction: column;
 }
