@@ -131,47 +131,20 @@ class ProductAdmin(admin.ModelAdmin):
     def color_display(self, obj):
         """Отображение цвета"""
         if obj.color:
-            # ИСПРАВЛЕНО: colors теперь словарь, а не множество
-            colors = {
-                'red': 'Красный', 
-                'blue': 'Синий', 
-                'green': 'Зеленый', 
-                'yellow': 'Желтый', 
-                'white': 'Белый', 
-                'black': 'Черный', 
-                'pink': 'Розовый', 
-                'purple': 'Фиолетовый',
-                'orange': 'Оранжевый', 
-                'brown': 'Коричневый', 
-                'gold': 'Золотой', 
-                'silver': 'Серебряный', 
-                'multi': 'Многоцветный'
-            }
-            # Используем словарь для получения названия цвета
-            color_name = colors.get(obj.color, obj.get_color_display())
-            return color_name
+            return obj.get_color_display()  # Просто возвращаем название цвета
         return "-"
     color_display.short_description = 'Цвет'
     
     def tags_by_category(self, obj):
-        """Список теги, сгруппированные по категориям"""
+        """Список тегов, сгруппированные по категориям"""
         tags = obj.tags.all().select_related('category')
         if tags:
-            grouped_tags = {}
+            tag_list = []
             for tag in tags:
                 cat_name = tag.category.get_name_display() if tag.category else 'Без категории'
-                if cat_name not in grouped_tags:
-                    grouped_tags[cat_name] = []
-                grouped_tags[cat_name].append(tag.name)
-            
-            html_parts = []
-            for cat_name, tag_list in grouped_tags.items():
-                tags_list = ", ".join(tag_list)
-                html_parts.append(
-                    f"<strong>{cat_name}:</strong> {tags_list}"
-                )
-            return format_html('<br>'.join(html_parts))
-        return "-"
+                tag_list.append(f"{cat_name}: {tag.name}")
+                return ", ".join(tag_list)
+            return "-"
     tags_by_category.short_description = 'Теги (по категориям)'
     
     def add_sabantuy_tag(self, request, queryset):

@@ -12,21 +12,22 @@
                 <a href="{% url 'catalog' %}" class="btn btn-primary">Смотреть товары</a>
                 <a href="{% url 'historical_articles' %}" class="btn btn-primary">Читать статьи</a>
                 <a href="{% url 'about' %}" class="btn btn-primary">Узнать больше</a>
-                <div style="position: fixed; bottom: 10px; left: 10px; z-index: 9999; background: white; padding: 5px; border-radius: 10px;">
-    <img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data={{ request.build_absolute_uri }}" alt="QR">
-</div>
             </div>
-
+            <!-- QR-код для мобильной версии -->
+            <div class="qr-container">
+                <p class="qr-label">Откройте сайт на телефоне</p>
+                <div class="qr-code">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=https://zukhrakamal.pythonanywhere.com" alt="QR-код для мобильного доступа">
+                </div>
+            </div>
         </div>
         <div class="hero-image">
             <img src="{% static 'img/log1.png' %}" alt="TatarBazar Logo">
         </div>
-        
     </div>
 </section>
 
-
-
+<!-- Остальной код слайдера и категорий без изменений... -->
 <section class="main-slider-section">
     <div class="section-header">
         <h2>Популярные образы</h2>
