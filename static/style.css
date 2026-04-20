@@ -2079,3 +2079,376 @@ body {
         display: inline !important;
     }
 }
+
+/* ===== ПОЛНАЯ ПЕРЕРАБОТКА МОБИЛЬНОЙ ВЕРСИИ ===== */
+
+/* 1. ИСПРАВЛЕНИЕ НАВБАРА - делаем его читабельным */
+@media (max-width: 768px) {
+    /* Фиксируем проблему с фоном */
+    .navbar {
+        background: #1a472a !important;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 9999;
+    }
+    
+    .navbar-toggler {
+        border: 1px solid white !important;
+        background: transparent !important;
+    }
+    
+    .navbar-toggler-icon {
+        filter: brightness(0) invert(1);
+    }
+    
+    .navbar-collapse {
+        background: #1a472a !important;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        padding: 20px !important;
+        border-radius: 0 0 15px 15px !important;
+        z-index: 9998;
+    }
+    
+    .navbar-nav {
+        margin: 0 !important;
+    }
+    
+    .navbar-nav .nav-link {
+        color: white !important;
+        font-size: 16px !important;
+        padding: 12px 0 !important;
+        border-bottom: 1px solid rgba(255,255,255,0.15) !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+    }
+    
+    .navbar-nav .nav-link i {
+        width: 25px;
+        color: #87a243 !important;
+        font-size: 18px;
+    }
+    
+    .navbar-nav .nav-link span {
+        color: white !important;
+    }
+    
+    /* Исправление выпадающих меню */
+    .dropdown-menu {
+        background: #2a5a3a !important;
+        border: none !important;
+        margin-left: 25px !important;
+        padding: 10px !important;
+    }
+    
+    .dropdown-item {
+        color: white !important;
+        padding: 8px 15px !important;
+    }
+    
+    .dropdown-item:hover {
+        background: #87a243 !important;
+    }
+    
+    /* 2. ПОИСК И КОРЗИНА */
+    .search-form {
+        margin: 15px 0 !important;
+        width: 100%;
+    }
+    
+    .search-container {
+        display: flex;
+        background: white;
+        border-radius: 30px;
+        overflow: hidden;
+        border: 1px solid #ddd;
+    }
+    
+    .search-input {
+        flex: 1;
+        border: none;
+        padding: 12px 15px;
+        font-size: 14px;
+        outline: none;
+    }
+    
+    .search-btn {
+        background: #87a243;
+        border: none;
+        padding: 0 20px;
+        color: white;
+    }
+    
+    .cart-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        background: #87a243;
+        padding: 10px;
+        border-radius: 30px;
+        color: white;
+        margin-top: 10px;
+    }
+    
+    .cart-text {
+        display: inline !important;
+    }
+}
+
+/* 3. УМЕНЬШАЕМ СЛАЙДЕР ДЛЯ ТЕЛЕФОНОВ */
+@media (max-width: 768px) {
+    .main-slider-section {
+        padding: 10px;
+    }
+    
+    .slider-container {
+        overflow: visible;
+    }
+    
+    /* Вертикальное расположение слайдов */
+    .slider-track {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 20px !important;
+        transform: none !important;
+    }
+    
+    .slider-slide {
+        display: flex !important;
+        flex-direction: column !important;
+        width: 100% !important;
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        margin-bottom: 15px;
+    }
+    
+    .slide-image {
+        width: 100%;
+        height: 180px;
+        overflow: hidden;
+    }
+    
+    .slide-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .slide-content {
+        padding: 15px;
+        text-align: center;
+    }
+    
+    .slide-content h3 {
+        font-size: 16px;
+        margin-bottom: 5px;
+    }
+    
+    .slide-content p {
+        font-size: 13px;
+        color: #666;
+        margin-bottom: 10px;
+    }
+    
+    /* Скрываем кнопки навигации на телефоне */
+    .slider-nav {
+        display: none !important;
+    }
+    
+    .product-preview {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: #f5f5f5;
+        padding: 10px;
+        border-radius: 12px;
+        margin-top: 10px;
+    }
+    
+    .product-preview img {
+        width: 50px !important;
+        height: 50px !important;
+        border-radius: 8px;
+    }
+    
+    .preview-info h4 {
+        font-size: 13px;
+        margin: 0 0 3px 0;
+    }
+    
+    .preview-info .price {
+        font-size: 12px;
+        color: #87a243;
+        font-weight: bold;
+    }
+}
+
+/* 4. ГЕРОЙ СЕКЦИЯ (шапка с логотипом) */
+@media (max-width: 768px) {
+    .hero-section {
+        margin-top: 60px;
+        padding: 15px;
+    }
+    
+    .hero-container {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .hero-content {
+        order: 2;
+    }
+    
+    .hero-image {
+        order: 1;
+        margin-bottom: 15px;
+    }
+    
+    .hero-image img {
+        max-width: 120px;
+    }
+    
+    .hero-title {
+        font-size: 22px;
+    }
+    
+    .hero-subtitle {
+        font-size: 14px;
+    }
+    
+    .hero-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+    }
+    
+    .hero-buttons .btn {
+        width: 80%;
+    }
+}
+
+/* 5. КАТЕГОРИИ ТОВАРОВ */
+@media (max-width: 768px) {
+    .categories-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 12px;
+        padding: 0 10px;
+    }
+    
+    .category-card {
+        padding: 15px 10px;
+    }
+    
+    .category-icon {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .category-icon i {
+        font-size: 24px;
+    }
+    
+    .category-card h3 {
+        font-size: 14px;
+        margin: 8px 0;
+    }
+    
+    .category-card p {
+        font-size: 11px;
+    }
+}
+
+/* 6. БРЕНДЫ */
+@media (max-width: 768px) {
+    .brands-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px;
+        padding: 0 10px;
+    }
+    
+    .brand-card {
+        padding: 10px;
+    }
+}
+
+/* 7. CTA СЕКЦИЯ */
+@media (max-width: 768px) {
+    .cta-section {
+        padding: 30px 15px;
+        margin: 20px 0;
+    }
+    
+    .cta-content h2 {
+        font-size: 20px;
+    }
+    
+    .cta-content p {
+        font-size: 14px;
+    }
+    
+    .cta-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+    }
+    
+    .cta-buttons .btn {
+        width: 80%;
+    }
+}
+
+/* 8. ОБЩИЕ НАСТРОЙКИ ДЛЯ ТЕЛЕФОНОВ */
+@media (max-width: 768px) {
+    body {
+        padding-top: 0;
+        background: #f9f9f9;
+    }
+    
+    .container, .container-fluid {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+    
+    .section-header h2 {
+        font-size: 22px;
+    }
+    
+    .section-header p {
+        font-size: 14px;
+    }
+    
+    /* QR код */
+    .qr-container {
+        margin-top: 20px;
+    }
+    
+    .qr-code img {
+        width: 80px;
+        height: 80px;
+    }
+}
+
+/* Для очень маленьких экранов (до 480px) */
+@media (max-width: 480px) {
+    .categories-grid {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .brands-grid {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .hero-buttons .btn,
+    .cta-buttons .btn {
+        width: 100%;
+    }
+}
