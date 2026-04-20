@@ -143,10 +143,8 @@ class ProductAdmin(admin.ModelAdmin):
             for tag in tags:
                 cat_name = tag.category.get_name_display() if tag.category else 'Без категории'
                 tag_list.append(f"{cat_name}: {tag.name}")
-                return ", ".join(tag_list)
+                return ", ".join(tag_list)  
             return "-"
-    tags_by_category.short_description = 'Теги (по категориям)'
-    
     def add_sabantuy_tag(self, request, queryset):
         """Добавить тег "сабантуй" к выбранным товарам"""
         event_category, _ = TagCategory.objects.get_or_create(
