@@ -128,13 +128,15 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 # Настройки EMAIL
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.mail.ru'
-EMAIL_PORT = 587  
-EMAIL_USE_TLS = True 
-EMAIL_USE_SSL = False  
-EMAIL_HOST_USER = 'zukhrakamal@mail.ru'
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_PASSWORD')  
-DEFAULT_FROM_EMAIL = 'zukhrakamal@mail.ru'
+EMAIL_HOST = 'smtp.yandex.ru'          # SMTP-сервер Яндекса [citation:1][citation:4]
+EMAIL_PORT = 465                       
+EMAIL_USE_SSL = True                    
+EMAIL_USE_TLS = False                   
+
+EMAIL_HOST_USER = 'zukhrakamal04@yandex.ru' # Ваш полный email-адрес
+EMAIL_HOST_PASSWORD = 'ozgfhhqwpbtbkbbi' 
+
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 PAYPAL_TEST = True
 PAYPAL_RECEIVER_EMAIL = 'zukhrakamal@mail.ru'

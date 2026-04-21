@@ -16,89 +16,91 @@
     </div>
 </header>
 <br/>
+
 <div class="container">
 {% if cart_products %}
     {% for product in cart_products %}
     
-<div class="card mb-3">
-  <div class="row g-0">
-    <div class="col-md-4">
-      <!-- Контейнер для изображения с соотношением 3:4 -->
-      <div style="width: 100%; height: 0; padding-bottom: 133.33%; position: relative; overflow: hidden;">
-        <img src="{{ product.image.url }}" 
-             class="img-fluid rounded-start" 
-             alt="{{ product.name }}"
-             style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
-      </div>
-    </div>
-    <div class="col-md-8">
-      <div class="card-body">
-        <center>
-        <h5 class="card-title">{{ product.name }}</h5>
-        <br/>
-        <p class="card-text justified">{{ product.description }}</p>
-        
-        {% if product.is_sale %}
-        <div class="d-flex justify-content-center small text-warning mb-2">
-                <div class="bi-star-fill"></div>
-                &nbsp;&nbsp;Распродажа!&nbsp;&nbsp;
-                <div class="bi-star-fill"></div>
-                </div>
-
-                <!-- Product price-->
-                <strike>
-                {{ product.price }} руб
-                </strike>
-                &nbsp;
-                {{ product.sale_price }} руб
-
-        {% else %}
-            {{ product.price }} руб
-            
-        {% endif %}
-            <br/><br/>
-            
-            <div class="row justify-content-center align-items-center">
-                <div class="col-auto">
-                    <button class="btn btn-outline-secondary minus-btn" data-index="{{product.id}}">-</button>
-                </div>
-                <div class="col-auto">
-                    <input type="number" class="form-control text-center qty-input" 
-                           id="qty{{product.id}}" 
-                           value="{% for key, value in quantities.items %}{% if key == product.id|slugify %}{{ value }}{% endif %}{% endfor %}" 
-                           min="1" max="50" style="width: 60px;"
-                           data-index="{{product.id}}">
-                </div>
-                <div class="col-auto">
-                    <button class="btn btn-outline-secondary plus-btn" data-index="{{product.id}}">+</button>
+    <div class="card mb-3 cart-product-card">
+        <div class="row g-0">
+            <div class="col-md-4">
+                <div style="width: 100%; height: 0; padding-bottom: 100%; position: relative; overflow: hidden;">
+                    <img src="{{ product.image.url }}" 
+                         class="img-fluid rounded-start" 
+                         alt="{{ product.name }}"
+                         style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
                 </div>
             </div>
-            
-            <br/><br/>
-        <a href="{% url 'home'%}" class="btn btn-secondary">Главная</a>
-        <button type="button" data-index="{{product.id}}" class="btn btn-danger delete-product">Удалить</button>
-        
-    </center>
-      </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <center>
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <br/>
+                        <p class="card-text justified">{{ product.description|truncatechars:100 }}</p>
+                        
+                        {% if product.is_sale %}
+                            <div class="d-flex justify-content-center small text-warning mb-2">
+                                <div class="bi-star-fill"></div>
+                                &nbsp;&nbsp;Распродажа!&nbsp;&nbsp;
+                                <div class="bi-star-fill"></div>
+                            </div>
+                            <strike>{{ product.price }} руб</strike>
+                            &nbsp;
+                            <span class="text-danger fw-bold">{{ product.sale_price }} руб</span>
+                        {% else %}
+                            <span class="fw-bold">{{ product.price }} руб</span>
+                        {% endif %}
+                        
+                        <br/><br/>
+                        
+                        <div class="row justify-content-center align-items-center g-2">
+                            <div class="col-auto">
+                                <button class="btn btn-outline-secondary minus-btn" data-index="{{product.id}}">-</button>
+                            </div>
+                            <div class="col-auto">
+                                <input type="number" class="form-control text-center qty-input" 
+                                       id="qty{{product.id}}" 
+                                       value="{% for key, value in quantities.items %}{% if key == product.id|slugify %}{{ value }}{% endif %}{% endfor %}" 
+                                       min="1" max="50" style="width: 55px;"
+                                       data-index="{{product.id}}">
+                            </div>
+                            <div class="col-auto">
+                                <button class="btn btn-outline-secondary plus-btn" data-index="{{product.id}}">+</button>
+                            </div>
+                        </div>
+                        
+                        <br/><br/>
+                        
+                        <div class="d-flex flex-wrap justify-content-center gap-2">
+                            <a href="{% url 'home'%}" class="btn btn-secondary btn-sm">Главная</a>
+                            <button type="button" data-index="{{product.id}}" class="btn btn-danger btn-sm delete-product">Удалить</button>
+                        </div>
+                    </center>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
 
     {% endfor %}
-    <div align="right">
-    <h3 id="cart-total">Итого: {{ totals }} руб</h3>
-    <button class="btn btn-danger" id="clear-cart">Очистить корзину</button>
     
-    {% if user.is_authenticated %}
-        <a href="{% url 'checkout' %}" class="btn btn-success">Оформить заказ</a>
-    {% else %}
-        <button class="btn btn-success" id="checkout-btn">Оформить заказ</button>
-    {% endif %}
-</div>
+    <div class="cart-total-section">
+        <h3 id="cart-total">Итого: {{ totals }} руб</h3>
+        <div class="d-flex flex-column gap-2 mt-3">
+            <button class="btn btn-danger" id="clear-cart">Очистить корзину</button>
+            {% if user.is_authenticated %}
+                <a href="{% url 'checkout' %}" class="btn btn-success">Оформить заказ</a>
+            {% else %}
+                <button class="btn btn-success" id="checkout-btn">Оформить заказ</button>
+            {% endif %}
+        </div>
+    </div>
 
     <br/><br/><br/>
-    {% else %}
-    В корзине пусто...
+{% else %}
+    <div class="text-center py-5">
+        <p>В корзине пусто...</p>
+        <a href="{% url 'catalog' %}" class="btn btn-primary">Перейти к покупкам</a>
+    </div>
     <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
 {% endif %}
 </div>
@@ -124,21 +126,18 @@ $(document).ready(function() {
         });
     });
 
-    // Общие функции для работы с количеством
     function updateQuantity(input, change) {
         var currentVal = parseInt(input.val());
         var newVal = currentVal + change;
         
         if (newVal >= 1 && newVal <= 50) {
             input.val(newVal);
-            // Автоматически обновляем корзину при изменении количества
             var productId = input.data('index');
             updateCart(productId, newVal);
         }
         return newVal;
     }
 
-    // Обработчики кнопок +/-
     $(document).on('click', '.minus-btn', function(e) {
         e.preventDefault();
         var productId = $(this).data('index');
@@ -153,7 +152,6 @@ $(document).ready(function() {
         updateQuantity(input, 1);
     });
 
-    // Валидация ввода
     $('.qty-input').on('change', function() {
         var value = parseInt($(this).val());
         if (isNaN(value) || value < 1) $(this).val(1);
@@ -162,7 +160,6 @@ $(document).ready(function() {
         updateCart(productId, value);
     });
 
-    // Удаление товара
     $(document).on('click', '.delete-product', function(e) {
         e.preventDefault();
         if (confirm('Удалить товар из корзины?')) {
@@ -171,7 +168,6 @@ $(document).ready(function() {
         }
     });
 
-    // Функции AJAX
     function updateCart(productId, qty) {
         $.ajax({
             type: 'POST',
@@ -183,7 +179,6 @@ $(document).ready(function() {
                 action: 'post'  
             },
             success: function(response) {
-                console.log(response);  // Проверка
                 if (response.totals !== undefined) {
                     $('#cart-total').text('Итого: ' + response.totals + ' руб');
                 }
@@ -203,7 +198,6 @@ $(document).ready(function() {
                 csrfmiddlewaretoken: '{{ csrf_token }}'
             },
             success: function() {
-                // Перезагружаем страницу после удаления
                 location.reload();
             },
             error: function(xhr) {
@@ -212,7 +206,6 @@ $(document).ready(function() {
         });
     }
     
-    // Очистить корзину
     $('#clear-cart').on('click', function(e) {
         e.preventDefault();
         if (confirm('Вы уверены, что хотите очистить корзину?')) {

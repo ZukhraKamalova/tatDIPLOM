@@ -259,6 +259,23 @@ p {
 .search-btn:hover {
     background: #145052;
 }
+@media (max-width: 768px) {
+    .about-text {
+        font-size: 14px !important;
+    }
+    
+    .about-text strong {
+        font-size: 16px !important;
+    }
+    
+    .about-text li {
+        font-size: 14px !important;
+    }
+    
+    .about-quote {
+        font-size: 16px !important;
+    }
+}
 
 /* Cart Button */
 .cart-btn {
@@ -295,6 +312,62 @@ p {
     position: absolute;
     top: -8px;
     right: -8px;
+}
+
+/* Мобильная версия корзины */
+@media (max-width: 768px) {
+    .cart-product-card {
+        margin-bottom: 15px;
+    }
+    
+    .cart-product-card .row {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .cart-product-card .col-md-4 {
+        width: 100%;
+        max-width: 120px;
+        margin: 0 auto;
+    }
+    
+    .cart-product-card .col-md-8 {
+        width: 100%;
+    }
+    
+    .cart-product-card .card-body {
+        padding: 12px;
+    }
+    
+    .cart-product-card h5 {
+        font-size: 14px;
+        margin-bottom: 5px;
+    }
+    
+    .cart-product-card .card-text {
+        font-size: 12px;
+        margin-bottom: 8px;
+    }
+    
+    .cart-product-card .qty-input {
+        width: 45px !important;
+        font-size: 14px;
+    }
+    
+    .cart-product-card .btn-sm {
+        padding: 5px 10px;
+        font-size: 12px;
+    }
+    
+    .cart-total-section {
+        text-align: center;
+        margin-top: 20px;
+    }
+    
+    .cart-total-section .btn {
+        width: 100%;
+        margin-top: 8px;
+    }
 }
 
 /* ===== HERO SECTION ===== */
