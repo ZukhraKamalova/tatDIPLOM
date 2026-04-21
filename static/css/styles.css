@@ -1329,4 +1329,164 @@ p {
         padding: 12px 18px;
         font-size: 24px;
     }
+    
+}
+
+/* ===== КОРЗИНА - УМЕНЬШЕНИЕ КАРТОЧЕК ДЛЯ МОБИЛЬНОЙ ВЕРСИИ ===== */
+@media (max-width: 768px) {
+    .cart-product-card {
+        margin-bottom: 12px !important;
+        border-radius: 12px !important;
+        overflow: hidden;
+    }
+    
+    /* Уменьшаем отступы внутри карточки */
+    .cart-product-card .card-body {
+        padding: 8px 12px !important;
+    }
+    
+    /* Уменьшаем заголовок товара */
+    .cart-product-card .card-title {
+        font-size: 14px !important;
+        margin-bottom: 4px !important;
+    }
+    
+    /* Уменьшаем описание */
+    .cart-product-card .card-text {
+        font-size: 11px !important;
+        margin-bottom: 6px !important;
+        line-height: 1.3 !important;
+    }
+    
+    /* Уменьшаем цену */
+    .cart-product-card .price,
+    .cart-product-card .fw-bold,
+    .cart-product-card strike {
+        font-size: 13px !important;
+    }
+    
+    /* Уменьшаем кнопки количества */
+    .cart-product-card .btn-outline-secondary {
+        padding: 4px 8px !important;
+        font-size: 12px !important;
+    }
+    
+    /* Уменьшаем поле количества */
+    .cart-product-card .qty-input {
+        width: 40px !important;
+        height: 30px !important;
+        font-size: 13px !important;
+        padding: 2px !important;
+    }
+    
+    /* Уменьшаем кнопки действий */
+    .cart-product-card .btn-sm {
+        padding: 4px 8px !important;
+        font-size: 11px !important;
+    }
+    
+    /* Уменьшаем изображение */
+    .cart-product-card .col-md-4 {
+        max-width: 100px !important;
+    }
+    
+    /* Итоговая секция */
+    .cart-total-section h3 {
+        font-size: 18px !important;
+    }
+    
+    .cart-total-section .btn {
+        padding: 8px 12px !important;
+        font-size: 13px !important;
+    }
+}
+@media (max-width: 768px) {
+    .cart-product-card {
+        margin-bottom: 12px !important;
+        border-radius: 12px !important;
+        overflow: hidden;
+    }
+    
+    .cart-product-card .card-body {
+        padding: 8px 12px !important;
+    }
+    
+    .cart-product-card .card-title {
+        font-size: 14px !important;
+        margin-bottom: 4px !important;
+    }
+    
+    .cart-product-card .card-text {
+        font-size: 11px !important;
+        margin-bottom: 6px !important;
+        line-height: 1.3 !important;
+    }
+    
+    .cart-product-card .price,
+    .cart-product-card .fw-bold,
+    .cart-product-card strike {
+        font-size: 13px !important;
+    }
+    
+    .cart-product-card .btn-outline-secondary {
+        padding: 4px 8px !important;
+        font-size: 12px !important;
+    }
+    
+    .cart-product-card .qty-input {
+        width: 40px !important;
+        height: 30px !important;
+        font-size: 13px !important;
+        padding: 2px !important;
+    }
+    
+    .cart-product-card .btn-sm {
+        padding: 4px 8px !important;
+        font-size: 11px !important;
+    }
+    
+    .cart-product-card .col-md-4 {
+        max-width: 100px !important;
+    }
+    
+    .cart-total-section h3 {
+        font-size: 18px !important;
+    }
+    
+    .cart-total-section .btn {
+        padding: 8px 12px !important;
+        font-size: 13px !important;
+    }
+}
+
+/* ===== СТРАНИЦА "О НАС" - УМЕНЬШЕНИЕ ТЕКСТА ДЛЯ МОБИЛЬНОЙ ВЕРСИИ ===== */
+@media (max-width: 768px) {
+    .about-text {
+        font-size: 14px !important;
+    }
+    
+    .about-text p {
+        font-size: 14px !important;
+        text-indent: 20px !important;
+        margin-bottom: 12px !important;
+    }
+    
+    .about-text strong {
+        font-size: 15px !important;
+    }
+    
+    .about-text ul {
+        font-size: 14px !important;
+        padding-left: 20px !important;
+    }
+    
+    .about-text li {
+        font-size: 14px !important;
+        margin-bottom: 6px !important;
+    }
+    
+    .about-text .about-quote {
+        font-size: 15px !important;
+        text-align: center !important;
+    }
 }
