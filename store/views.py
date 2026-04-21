@@ -628,6 +628,13 @@ def chat_with_assistant(request):
                 request.session['chat_history'] = request.session['chat_history'][-10:]
             
             request.session.modified = True
+            if request.user.is_authenticated:
+                save_chat_to_db(
+                    request.user,
+                    user_message,
+                    reply_message,
+                    suggested_products
+                )
             
             return JsonResponse({
                 'reply': reply_message,
