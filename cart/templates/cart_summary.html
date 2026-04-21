@@ -52,25 +52,7 @@
                         {% endif %}
                         
                         <br/><br/>
-                        
-                        <div class="row justify-content-center align-items-center g-2">
-                            <div class="col-auto">
-                                <button class="btn btn-outline-secondary minus-btn" data-index="{{product.id}}">-</button>
-                            </div>
-                            <div class="col-auto">
-                                <input type="number" class="form-control text-center qty-input" 
-                                       id="qty{{product.id}}" 
-                                       value="{% for key, value in quantities.items %}{% if key == product.id|slugify %}{{ value }}{% endif %}{% endfor %}" 
-                                       min="1" max="50" style="width: 55px;"
-                                       data-index="{{product.id}}">
-                            </div>
-                            <div class="col-auto">
-                                <button class="btn btn-outline-secondary plus-btn" data-index="{{product.id}}">+</button>
-                            </div>
-                        </div>
-                        
-                        <br/><br/>
-                        
+                       
                         <div class="d-flex align-items-center justify-content-center gap-2 my-2">
     <button class="btn btn-outline-secondary minus-btn" data-index="{{product.id}}">-</button>
     <input type="number" class="form-control text-center qty-input" 
