@@ -1613,3 +1613,38 @@ p {
         padding: 8px 10px !important;
     }
 }
+/* ===== ЦЕНТРИРОВАНИЕ ФОТО В КОРЗИНЕ НА МОБИЛЬНОЙ ВЕРСИИ ===== */
+@media (max-width: 768px) {
+    /* Центрируем контейнер с фото */
+    .cart-product-card .col-md-4 {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 10px 0 !important;
+    }
+    
+    .cart-product-card .col-md-4 div {
+        width: 100px !important;
+        height: 100px !important;
+        margin: 0 auto !important;
+        padding-bottom: 0 !important;
+        position: relative !important;
+    }
+    
+    .cart-product-card .col-md-4 img {
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+    }
+    
+    /* Контент карточки */
+    .cart-product-card .col-md-8 {
+        width: 100% !important;
+        text-align: center !important;
+    }
+}

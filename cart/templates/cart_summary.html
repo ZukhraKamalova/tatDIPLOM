@@ -22,54 +22,49 @@
     {% for product in cart_products %}
     
     <div class="card mb-3 cart-product-card">
-        <div class="row g-0">
-            <div class="col-md-4">
-                <div style="width: 100%; height: 0; padding-bottom: 100%; position: relative; overflow: hidden;">
-                    <img src="{{ product.image.url }}" 
-                         class="img-fluid rounded-start" 
-                         alt="{{ product.name }}"
-                         style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
-                </div>
+    <div class="row g-0">
+        <div class="col-md-4 d-flex justify-content-center align-items-center p-2">
+            <div style="width: 100px; height: 100px; position: relative; overflow: hidden; border-radius: 8px;">
+                <img src="{{ product.image.url }}" 
+                     alt="{{ product.name }}"
+                     style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
             </div>
-            <div class="col-md-8">
-                <div class="card-body">
-                    <center>
-                        <h5 class="card-title">{{ product.name }}</h5>
-                        <br/>
-                        <p class="card-text justified">{{ product.description|truncatechars:100 }}</p>
-                        
-                        {% if product.is_sale %}
-                            <div class="d-flex justify-content-center small text-warning mb-2">
-                                <div class="bi-star-fill"></div>
-                                &nbsp;&nbsp;Распродажа!&nbsp;&nbsp;
-                                <div class="bi-star-fill"></div>
-                            </div>
-                            <strike>{{ product.price }} руб</strike>
-                            &nbsp;
-                            <span class="text-danger fw-bold">{{ product.sale_price }} руб</span>
-                        {% else %}
-                            <span class="fw-bold">{{ product.price }} руб</span>
-                        {% endif %}
-                        
-                        <br/><br/>
-                       
-                        <div class="d-flex align-items-center justify-content-center gap-2 my-2">
-    <button class="btn btn-outline-secondary minus-btn" data-index="{{product.id}}">-</button>
-    <input type="number" class="form-control text-center qty-input" 
-           id="qty{{product.id}}" 
-           value="{% for key, value in quantities.items %}{% if key == product.id|slugify %}{{ value }}{% endif %}{% endfor %}" 
-           min="1" max="50">
-    <button class="btn btn-outline-secondary plus-btn" data-index="{{product.id}}">+</button>
-</div>
-<div class="d-flex flex-wrap justify-content-center gap-2 mt-2">
-    <a href="{% url 'home'%}" class="btn btn-secondary btn-sm">Главная</a>
-    <button type="button" data-index="{{product.id}}" class="btn btn-danger btn-sm delete-product">Удалить</button>
-</div>
-                    </center>
+        </div>
+        <div class="col-md-8">
+            <div class="card-body text-center text-md-start">
+                <h5 class="card-title">{{ product.name }}</h5>
+                <p class="card-text justified">{{ product.description|truncatechars:80 }}</p>
+                
+                {% if product.is_sale %}
+                    <div class="d-flex justify-content-center justify-content-md-start small text-warning mb-2">
+                        <div class="bi-star-fill"></div>
+                        &nbsp;&nbsp;Распродажа!&nbsp;&nbsp;
+                        <div class="bi-star-fill"></div>
+                    </div>
+                    <strike>{{ product.price }} руб</strike>
+                    &nbsp;
+                    <span class="text-danger fw-bold">{{ product.sale_price }} руб</span>
+                {% else %}
+                    <span class="fw-bold">{{ product.price }} руб</span>
+                {% endif %}
+                
+                <div class="d-flex align-items-center justify-content-center justify-content-md-start gap-2 my-2">
+                    <button class="btn btn-outline-secondary minus-btn" data-index="{{product.id}}">-</button>
+                    <input type="number" class="form-control text-center qty-input" 
+                           id="qty{{product.id}}" 
+                           value="{% for key, value in quantities.items %}{% if key == product.id|slugify %}{{ value }}{% endif %}{% endfor %}" 
+                           min="1" max="50" style="width: 50px;">
+                    <button class="btn btn-outline-secondary plus-btn" data-index="{{product.id}}">+</button>
+                </div>
+                
+                <div class="d-flex flex-wrap justify-content-center justify-content-md-start gap-2 mt-2">
+                    <a href="{% url 'home'%}" class="btn btn-secondary btn-sm">Главная</a>
+                    <button type="button" data-index="{{product.id}}" class="btn btn-danger btn-sm delete-product">Удалить</button>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
     {% endfor %}
     
