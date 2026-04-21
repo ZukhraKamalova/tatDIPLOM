@@ -259,27 +259,31 @@ function showWelcomeMessage() {
     
     // Добавление сообщения
     function addMessage(sender, text, isUser, products = null) {
-        const messageDiv = document.createElement('div');
-        messageDiv.className = 'message ' + (isUser ? 'user' : 'assistant');
-        
-        if (isUser) {
-            messageDiv.innerHTML = '<strong>Вы:</strong> ' + text;
-        } else {
-            messageDiv.innerHTML = '<strong>Стилист:</strong> ' + text;
-        }
-        
-        chatMessages.appendChild(messageDiv);
-        
-        // Показываем товары если есть
-        if (products && products.length > 0) {
-            setTimeout(() => showProducts(products), 100);
-        }
-        
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-        
-        // Сохраняем в localStorage
-        setTimeout(saveChatToLocalStorage, 100);
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'message ' + (isUser ? 'user' : 'assistant');
+    
+    if (isUser) {
+        messageDiv.innerHTML = '<strong>Вы:</strong> ' + text;
+    } else {
+        messageDiv.innerHTML = '<strong>Стилист:</strong> ' + text;
     }
+    
+    chatMessages.appendChild(messageDiv);
+    
+    if (products && products.length > 0) {
+        setTimeout(() => showProducts(products), 100);
+    }
+    
+    // Принудительная прокрутка вниз
+    setTimeout(() => {
+        chatMessages.scrollTo({
+            top: chatMessages.scrollHeight,
+            behavior: 'smooth'
+        });
+    }, 50);
+    
+    setTimeout(saveChatToLocalStorage, 100);
+}
 
 
 
