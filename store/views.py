@@ -19,6 +19,7 @@ from django.views.decorators.csrf import csrf_exempt
 import openai
 from django.apps import apps
 import random
+from django.contrib.auth.decorators import login_required
 
 
 def search(request):
@@ -869,7 +870,59 @@ def clear_chat_history(request):
         del request.session['chat_history']
     return JsonResponse({'status': 'history cleared'})
 
+from store.models import ChatHistory
 
+def save_chat_to_db(user, message, response, products):
+    """Сохраняет диалог в базу данных"""
+    if user.is_authenticated:
+        ChatHistory.objects.create(
+            user=user,
+            message=message,
+            response=response,
+            products_data=products
+        )
+
+def get_user_chat_history(user):
+    """Получает историю чата пользователя из БД"""
+    if user.is_authenticated:
+        chats = ChatHistory.objects.filter(user=user).order_by('created_at')[:20]
+        history = []
+        for chat in chats:
+            history.append({
+                'role': 'user',
+                'content': chat.message,
+                'html': f'<strong>Вы:</strong> {chat.message}'
+            })
+            history.append({
+                'role': 'assistant',
+                'content': chat.response,
+                'html': f'<strong>Стилист:</strong> {chat.response}'
+            })
+        return history
+    return []
+
+def clear_user_chat_history(user):
+    """Очищает историю чата пользователя"""
+    if user.is_authenticated:
+        ChatHistory.objects.filter(user=user).delete()
+@login_required
+def get_chat_history(request):
+    """API для получения истории чата текущего пользователя"""
+    if request.method == 'GET':
+        history = get_user_chat_history(request.user)
+        return JsonResponse({
+            'history': history,
+            'is_authenticated': True
+        })
+    return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+@login_required
+def clear_chat_history_db(request):
+    """Очистка истории чата в БД"""
+    if request.method == 'POST':
+        clear_user_chat_history(request.user)
+        return JsonResponse({'status': 'history cleared'})
+    return JsonResponse({'error': 'Method not allowed'}, status=405)
 
 def historical_articles(request):
     """Список всех исторических статей"""

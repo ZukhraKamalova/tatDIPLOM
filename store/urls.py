@@ -20,6 +20,8 @@ urlpatterns = [
     path('assistant/chat/', views.chat_with_assistant, name='assistant_chat'),
     path('assistant/clear/', views.clear_chat_history, name='clear_chat'),
     path('api/search-products/', views.search_products_api, name='search_products_api'),
+    path('api/chat-history/', views.get_chat_history, name='get_chat_history'),
+    path('api/chat-clear/', views.clear_chat_history_db, name='clear_chat_history_db'),
     path('culture/', historical_articles, name='historical_articles'),
     path('culture/article/<int:article_id>/', article_detail, name='article_detail'),
 

@@ -236,3 +236,18 @@ class HistoricalArticle(models.Model):
     def __str__(self):
         return self.title
 
+class ChatHistory(models.Model):
+    """История чата с AI-стилистом для каждого пользователя"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='chat_histories')
+    message = models.TextField(verbose_name='Сообщение')
+    response = models.TextField(verbose_name='Ответ стилиста')
+    products_data = models.JSONField(default=list, blank=True, verbose_name='Предложенные товары')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
+    
+    class Meta:
+        verbose_name = 'История чата'
+        verbose_name_plural = 'Истории чатов'
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f'Чат {self.user.username} - {self.created_at.strftime("%Y-%m-%d %H:%M")}'
