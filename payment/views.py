@@ -146,40 +146,39 @@ def process_order(request):
                         price=price
                     )
 
-        # Подготовка данных для письма
-        order_details = {
-            'order_id': order.id,
-            'products': [],
-            'total': totals,
-            'shipping_info': {
-                'shipping_full_name': my_shipping['shipping_full_name'],
-                'shipping_address': my_shipping['shipping_address'],
-                'shipping_city': my_shipping['shipping_city'],
-            },
-            'date_ordered': order.date_ordered.strftime('%d.%m.%Y %H:%M'),
-        }
+        # ========== ОТПРАВКА EMAIL - ВРЕМЕННО ОТКЛЮЧЕНА ==========
+        # Подготовка данных для письма (закомментировано)
+        # order_details = {
+        #     'order_id': order.id,
+        #     'products': [],
+        #     'total': totals,
+        #     'shipping_info': {
+        #         'shipping_full_name': my_shipping['shipping_full_name'],
+        #         'shipping_address': my_shipping['shipping_address'],
+        #         'shipping_city': my_shipping['shipping_city'],
+        #     },
+        #     'date_ordered': order.date_ordered.strftime('%d.%m.%Y %H:%M'),
+        # }
+        #
+        # for item in order.orderitem_set.all():
+        #     order_details['products'].append({
+        #         'name': item.product.name,
+        #         'price': item.price,
+        #         'quantity': item.quantity,
+        #         'subtotal': item.price * item.quantity,
+        #     })
+        #
+        # # Отправка email
+        # email_sent = send_order_confirmation_email(order.email, order_details)
+        # 
+        # if email_sent:
+        #     messages.success(request, f'Заказ №{order.id} успешно оформлен! Подтверждение отправлено на {order.email}')
+        # else:
+        #     messages.warning(request, f'Заказ №{order.id} оформлен, но не удалось отправить подтверждение на {order.email}.')
+        # ========== КОНЕЦ ЗАКОММЕНТИРОВАННОГО БЛОКА ==========
 
-        for item in order.orderitem_set.all():
-            order_details['products'].append({
-                'name': item.product.name,
-                'price': item.price,
-                'quantity': item.quantity,
-                'subtotal': item.price * item.quantity,
-            })
-
-        # Отправка email
-        email_sent = send_order_confirmation_email(order.email, order_details)
-        
-        if email_sent:
-            messages.success(
-                request, 
-                f'Заказ №{order.id} успешно оформлен! Подтверждение отправлено на {order.email}'
-            )
-        else:
-            messages.warning(
-                request, 
-                f'Заказ №{order.id} оформлен, но не удалось отправить подтверждение на {order.email}.'
-            )
+        # Простое сообщение об успешном оформлении заказа
+        messages.success(request, f'Заказ №{order.id} успешно оформлен!')
 
         # Очистка корзины и сессии
         if request.user.is_authenticated:
