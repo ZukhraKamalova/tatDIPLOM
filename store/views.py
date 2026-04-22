@@ -20,6 +20,7 @@ import openai
 from django.apps import apps
 import random
 from django.contrib.auth.decorators import login_required
+from payment.models import Order, OrderItem  
 
 
 def search(request):
@@ -89,34 +90,7 @@ def update_password(request):
                 return redirect('home')
 
 
-def update_user(request):
-    if not request.user.is_authenticated:
-        messages.error(request, "Войдите в систему")
-        return redirect('home')
 
-    current_user = request.user
-
-    if request.method == 'POST':
-        user_form = UpdateUserForm(request.POST, instance=current_user)
-        password_form = ChangePassword(current_user, request.POST)
-
-        if user_form.is_valid() and password_form.is_valid():
-            user_form.save()
-            password_form.save()
-            messages.success(request, "Профиль и пароль успешно обновлены")
-            login(request, current_user)  # обновить сессию после смены пароля
-            return redirect('home')
-        else:
-            pass
-    else:
-        user_form = UpdateUserForm(instance=current_user)
-        password_form = ChangePassword(current_user)
-
-    context = {
-        'user_form': user_form,
-        'password_form': password_form,
-    }
-    return render(request, 'update_user.html', context)
 
 
 def category_summary(request):
@@ -972,3 +946,53 @@ def article_detail(request, article_id):
     
     return render(request, 'article_detail.html', context)
 
+
+
+def update_user(request):
+    if not request.user.is_authenticated:
+        messages.error(request, "Войдите в систему")
+        return redirect('home')
+
+    current_user = request.user
+    
+    # Получаем адрес доставки
+    try:
+        shipping_user = ShippingAddress.objects.get(user=request.user)
+        shipping_form = ShippingForm(instance=shipping_user)
+    except ShippingAddress.DoesNotExist:
+        shipping_form = ShippingForm()
+
+    if request.method == 'POST':
+        user_form = UpdateUserForm(request.POST, instance=current_user)
+        password_form = ChangePassword(current_user, request.POST)
+        
+        if user_form.is_valid() and password_form.is_valid():
+            user_form.save()
+            password_form.save()
+            login(request, current_user)
+            messages.success(request, "Профиль и пароль успешно обновлены")
+            return redirect('home')
+        else:
+            pass
+    else:
+        user_form = UpdateUserForm(instance=current_user)
+        password_form = ChangePassword(current_user)
+
+    # Получаем заказы пользователя
+    orders = Order.objects.filter(user=request.user).order_by('-date_ordered')
+    orders_data = []
+    for order in orders:
+        items = OrderItem.objects.filter(order=order)
+        orders_data.append({
+            'order': order,
+            'items': items,
+            'total': order.amount_paid
+        })
+
+    context = {
+        'user_form': user_form,
+        'password_form': password_form,
+        'shipping_form': shipping_form,
+        'orders_data': orders_data,
+    }
+    return render(request, 'update_user.html', context)

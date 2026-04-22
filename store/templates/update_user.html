@@ -10,25 +10,124 @@
         overflow: hidden;
     ">   
         <div class="container text-center" style="position: relative; z-index: 2;">
-            <h1 class="display-4 fw-bold">Обновить профиль</h1>
+            <h1 class="display-4 fw-bold">Личный кабинет</h1>
+            <p class="lead">Управление профилем, адресом доставки и заказами</p>
         </div>
     </header>
 
     <div class="container">
         <div class="row">
-            <div class="col-md-6 offset-md-3">
+            <div class="col-md-8 offset-md-2">
                 <br/><br/>
-                <form method="POST" action="{% url 'update_user' %}">
-                    {% csrf_token %}
-                    {{ user_form.as_p }}
-                    {{ password_form.as_p }}  
-                    <br/><br/>
-                    <button type="submit" class="btn btn-secondary">
-                        Обновить профиль
-                    </button>
-                </form>
-
-                <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+                
+                <!-- Вкладки -->
+                <ul class="nav nav-tabs" id="profileTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab">
+                            <i class="bi bi-person"></i> Профиль
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="shipping-tab" data-bs-toggle="tab" data-bs-target="#shipping" type="button" role="tab">
+                            <i class="bi bi-truck"></i> Адрес доставки
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="orders-tab" data-bs-toggle="tab" data-bs-target="#orders" type="button" role="tab">
+                            <i class="bi bi-box-seam"></i> Мои заказы
+                        </button>
+                    </li>
+                </ul>
+                
+                <div class="tab-content mt-4">
+                    <!-- Вкладка Профиль -->
+                    <div class="tab-pane fade show active" id="profile" role="tabpanel">
+                        <div class="card">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0">Личные данные</h5>
+                            </div>
+                            <div class="card-body">
+                                <form method="POST" action="{% url 'update_user' %}">
+                                    {% csrf_token %}
+                                    {{ user_form.as_p }}
+                                    {{ password_form.as_p }}
+                                    <button type="submit" class="btn btn-success">Сохранить изменения</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Вкладка Адрес доставки -->
+                    <div class="tab-pane fade" id="shipping" role="tabpanel">
+                        <div class="card">
+                            <div class="card-header bg-success text-white">
+                                <h5 class="mb-0">Адрес доставки</h5>
+                            </div>
+                            <div class="card-body">
+                                <form method="POST" action="{% url 'update_info' %}">
+                                    {% csrf_token %}
+                                    {{ shipping_form.as_p }}
+                                    <button type="submit" class="btn btn-success">Сохранить адрес</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Вкладка Мои заказы -->
+                    <div class="tab-pane fade" id="orders" role="tabpanel">
+                        <div class="card">
+                            <div class="card-header bg-warning text-dark">
+                                <h5 class="mb-0">История заказов</h5>
+                            </div>
+                            <div class="card-body">
+                                {% if orders_data %}
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-hover">
+                                            <thead class="table-dark">
+                                                <tr>
+                                                    <th>№ заказа</th>
+                                                    <th>Дата</th>
+                                                    <th>Сумма</th>
+                                                    <th>Статус</th>
+                                                    <th>Состав</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for data in orders_data %}
+                                                <tr>
+                                                    <td>#{{ data.order.id }}</td>
+                                                    <td>{{ data.order.date_ordered|date:"d.m.Y H:i" }}</td>
+                                                    <td>{{ data.total }} ₽</td>
+                                                    <td>
+                                                        {% if data.order.shipped %}
+                                                            <span class="badge bg-success">Доставлен</span>
+                                                        {% else %}
+                                                            <span class="badge bg-warning">Обрабатывается</span>
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                        <ul class="list-unstyled mb-0">
+                                                            {% for item in data.items %}
+                                                            <li>{{ item.product.name }} × {{ item.quantity }} = {{ item.price|floatformat:0 }} ₽</li>
+                                                            {% endfor %}
+                                                        </ul>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                {% else %}
+                                    <div class="alert alert-info text-center">
+                                        У вас пока нет заказов. <a href="{% url 'catalog' %}">Перейти к покупкам</a>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <br/><br/><br/>
             </div>
         </div>
     </div>
