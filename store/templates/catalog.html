@@ -46,49 +46,48 @@
 
 <div class="container-fluid mt-3">
     <div class="row">
-        <div class="col-lg-2">
+        <!-- Левая панель фильтров -->
+        <div class="col-lg-3">
             <div class="filter-panel">
                 <h5 class="text-gold">Фильтр товаров</h5>
                 <form method="get" action="{% url 'catalog' %}" id="priceFilterForm">
+                    <!-- Фильтр по цене -->
                     <div class="mb-3">
                         <label class="form-label">Цена</label>
                         <div class="d-flex align-items-center gap-2">
-                            <input type="number" class="form-control w-auto" style="min-width: 77px;"
+                            <input type="number" class="form-control w-auto" style="min-width: 70px;"
                                    name="min_price" id="minPriceInput" placeholder="От" 
                                    value="{{ selected_min_price }}" min="{{ min_price }}">
-                            <span class="flex-shrink-0">—</span>
-                            <input type="number" class="form-control w-auto" style="min-width: 77px;"
+                            <span>—</span>
+                            <input type="number" class="form-control w-auto" style="min-width: 70px;"
                                    name="max_price" id="maxPriceInput" placeholder="До" 
                                    value="{{ selected_max_price }}" max="{{ max_price }}">
                         </div>
-                        <div class="text-muted small mt-1">
-                            Диапазон: {{ min_price }}₽ — {{ max_price }}₽
-                        </div>
                     </div>
                     
-           <div class="mb-3">
+                
+<div class="mb-3">
     <div class="d-flex justify-content-between align-items-center" style="cursor: pointer;" onclick="toggleColors()">
         <label class="form-label mb-0">Цвета</label>
         <small id="colorsToggleIcon">▼</small>
     </div>
     <div id="colorsList" style="display: block; margin-top: 10px;">
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
             {% for color_code, color_name in color_choices %}
-            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 12px;">
+            <label style="cursor: pointer;" title="{{ color_name }}">
                 <input type="checkbox" name="color" value="{{ color_code }}" 
+                       style="display: none;" 
                        class="color-checkbox"
-                       style="display: none;"
                        {% if color_code in selected_colors %}checked{% endif %}
                        onchange="this.form.submit()">
-                <div class="color-circle color-{{ color_code }}" style="width: 24px; height: 24px; border-radius: 50%; border: 1px solid #ddd; transition: all 0.2s;"></div>
-                <span style="flex: 1; white-space: normal; word-break: break-word; line-height: 1.3;">{{ color_name }}</span>
+                <div class="color-dot color-{{ color_code }} {% if color_code in selected_colors %}selected{% endif %}"></div>
             </label>
             {% endfor %}
         </div>
     </div>
 </div>
-</div>
                     
+                    <!-- Категории (свернутые) -->
                     <div class="mb-3">
                         <div class="d-flex justify-content-between align-items-center" style="cursor: pointer;" onclick="toggleCategory()">
                             <label class="form-label mb-0">Категории</label>
@@ -99,13 +98,15 @@
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" name="category"
                                            value="{{ category.name }}" id="cat{{ forloop.counter }}"
-                                           {% if category.name in selected_categories %}checked{% endif %}>
+                                           {% if category.name in selected_categories %}checked{% endif %}
+                                           onchange="this.form.submit()">
                                     <label class="form-check-label" for="cat{{ forloop.counter }}">{{ category.name }}</label>
                                 </div>
                             {% endfor %}
                         </div>
                     </div>
                     
+                    <!-- Бренды (свернутые) -->
                     <div class="mb-3">
                         <div class="d-flex justify-content-between align-items-center" style="cursor: pointer;" onclick="toggleBrands()">
                             <label class="form-label mb-0">Бренды</label>
@@ -116,7 +117,8 @@
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" name="brand"
                                            value="{{ brand.brand_name }}"
-                                           {% if brand.brand_name in selected_brands %}checked{% endif %}>
+                                           {% if brand.brand_name in selected_brands %}checked{% endif %}
+                                           onchange="this.form.submit()">
                                     <label class="form-check-label">{{ brand.brand_name }}</label>
                                 </div>
                             {% endfor %}
@@ -128,10 +130,11 @@
             </div>
         </div>
         
-        <div class="col-lg-10">
+        <!-- Сетка товаров СПРАВА -->
+        <div class="col-lg-9">
             <div class="row g-4">
                 {% for product in products %}
-                <div class="col-lg-3 col-md-4 col-sm-6 col-6">
+                <div class="col-lg-4 col-md-6 col-sm-6 col-6">
                     <div class="card h-100 border-0 shadow-sm">
                         {% if product.is_sale %}
                         <div class="badge bg-danger text-white position-absolute" style="top: 0.5rem; right: 0.5rem; z-index: 1;">Скидка</div>
@@ -225,81 +228,20 @@ document.addEventListener('DOMContentLoaded', function() {
         minPriceInput.value = minVal;
         maxPriceInput.value = maxVal;
     });
-
-    minPriceInput.addEventListener('blur', function() {
-        let value = parseFloat(this.value) || minPrice;
-        if (value < minPrice) value = minPrice;
-        if (value > maxPrice) value = maxPrice;
-        this.value = value;
-    });
-
-    maxPriceInput.addEventListener('blur', function() {
-        let value = parseFloat(this.value) || maxPrice;
-        if (value > maxPrice) value = maxPrice;
-        if (value < minPrice) value = minPrice;
-        this.value = value;
-    });
 });
 
 document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('.add-to-cart-btn').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-            const productId = this.dataset.productId;
-            const card = this.closest('.card');
-            const qtyInput = card.querySelector('.qty-input');
-            const qty = qtyInput ? qtyInput.value : 1;
-            const csrfToken = document.getElementById('csrf-token').dataset.token;
-            if (!productId) {
-                Swal.fire('Ошибка', 'Нет ID товара', 'error');
-                return;
-            }
-            fetch("{% url 'cart_add' %}", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-CSRFToken': csrfToken
-                },
-                body: new URLSearchParams({
-                    'product_id': productId,
-                    'product_qty': qty,
-                    'action': 'post'
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                const cartQuantityElem = document.getElementById('cart_quantity');
-                if (cartQuantityElem) cartQuantityElem.textContent = data.cart_quantity;
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Добавлено в корзину',
-                    showConfirmButton: false,
-                    timer: 1500
-                });
-            })
-            .catch(error => {
-                Swal.fire('Ошибка', 'Не удалось добавить товар', 'error');
-            });
-        });
-    });
-});
-// Подсветка выбранных цветов
+    // Обновление выделения цветов
 document.querySelectorAll('.color-checkbox').forEach(checkbox => {
-    const circle = checkbox.nextElementSibling;
-    if (checkbox.checked) {
-        circle.style.boxShadow = '0 0 0 2px #2c7a51, 0 0 0 4px white';
-        circle.style.transform = 'scale(1.05)';
-    }
-    
     checkbox.addEventListener('change', function() {
+        const dot = this.nextElementSibling;
         if (this.checked) {
-            circle.style.boxShadow = '0 0 0 2px #2c7a51, 0 0 0 4px white';
-            circle.style.transform = 'scale(1.05)';
+            dot.classList.add('selected');
         } else {
-            circle.style.boxShadow = 'none';
-            circle.style.transform = 'scale(1)';
+            dot.classList.remove('selected');
         }
     });
 });
+});
 </script>
-
 {% endblock %}
