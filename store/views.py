@@ -37,34 +37,7 @@ def search(request):
         })
     else:
         return render(request, 'search.html', {})
-
-
-def update_info(request):
-    if request.user.is_authenticated:
-        # Получаем или создаем профиль пользователя
-        current_user, created = Profile.objects.get_or_create(user=request.user)
-        
-        # Получаем или создаем адрес доставки
-        shipping_user, created = ShippingAddress.objects.get_or_create(user=request.user)
-        
-        form = UserInfoForm(request.POST or None, instance=current_user)
-        shipping_form = ShippingForm(request.POST or None, instance=shipping_user)
-        
-        if request.method == 'POST':
-            if form.is_valid() and shipping_form.is_valid():
-                form.save()
-                shipping_form.save()
-                messages.success(request, "Информация о пользователе обновлена")
-                return redirect('home')
-        
-        return render(request, "update_info.html", {
-            'form': form,
-            'shipping_form': shipping_form
-        })
-    else:
-        messages.success(request, "Войдите в систему")
-        return redirect('home')
-      
+    
 
         
 def update_password(request):
@@ -955,28 +928,39 @@ def update_user(request):
 
     current_user = request.user
     
-    # Получаем адрес доставки
-    try:
-        shipping_user = ShippingAddress.objects.get(user=request.user)
-        shipping_form = ShippingForm(instance=shipping_user)
-    except ShippingAddress.DoesNotExist:
-        shipping_form = ShippingForm()
+    # Получаем или создаем профиль и адрес доставки
+    profile, created = Profile.objects.get_or_create(user=current_user)
+    shipping_address, created = ShippingAddress.objects.get_or_create(user=current_user)
 
     if request.method == 'POST':
-        user_form = UpdateUserForm(request.POST, instance=current_user)
-        password_form = ChangePassword(current_user, request.POST)
-        
-        if user_form.is_valid() and password_form.is_valid():
-            user_form.save()
-            password_form.save()
-            login(request, current_user)
-            messages.success(request, "Профиль и пароль успешно обновлены")
-            return redirect('home')
+        # Проверяем, какая форма отправлена
+        if 'update_shipping' in request.POST:
+            # Обновление адреса доставки
+            shipping_form = ShippingForm(request.POST, instance=shipping_address)
+            if shipping_form.is_valid():
+                shipping_form.save()
+                messages.success(request, "Адрес доставки обновлен")
+            else:
+                messages.error(request, "Ошибка при обновлении адреса")
         else:
-            pass
+            # Обновление профиля и пароля
+            user_form = UpdateUserForm(request.POST, instance=current_user)
+            password_form = ChangePassword(current_user, request.POST)
+            
+            if user_form.is_valid() and password_form.is_valid():
+                user_form.save()
+                password_form.save()
+                login(request, current_user)
+                messages.success(request, "Профиль и пароль успешно обновлены")
+            else:
+                messages.error(request, "Ошибка при обновлении профиля")
+        
+        return redirect('update_user')
+    
     else:
         user_form = UpdateUserForm(instance=current_user)
         password_form = ChangePassword(current_user)
+        shipping_form = ShippingForm(instance=shipping_address)
 
     # Получаем заказы пользователя
     orders = Order.objects.filter(user=request.user).order_by('-date_ordered')

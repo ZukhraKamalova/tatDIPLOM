@@ -64,9 +64,10 @@
                                 <h5 class="mb-0">Адрес доставки</h5>
                             </div>
                             <div class="card-body">
-                                <form method="POST" action="{% url 'update_info' %}">
+                                <form method="POST" action="{% url 'update_user' %}">
                                     {% csrf_token %}
                                     {{ shipping_form.as_p }}
+                                    <input type="hidden" name="update_shipping" value="1">
                                     <button type="submit" class="btn btn-success">Сохранить адрес</button>
                                 </form>
                             </div>
