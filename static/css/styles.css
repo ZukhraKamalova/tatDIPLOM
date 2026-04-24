@@ -1798,16 +1798,23 @@ p {
     }
 }
 
-.color-circle[data-color="red"] { background-color: #ff0000; }
-.color-circle[data-color="blue"] { background-color: #0000ff; }
-.color-circle[data-color="green"] { background-color: #008000; }
-.color-circle[data-color="yellow"] { background-color: #ffff00; }
-.color-circle[data-color="white"] { background-color: #ffffff; }
-.color-circle[data-color="black"] { background-color: #000000; }
-.color-circle[data-color="pink"] { background-color: #ffc0cb; }
-.color-circle[data-color="purple"] { background-color: #800080; }
-.color-circle[data-color="orange"] { background-color: #ffa500; }
-.color-circle[data-color="brown"] { background-color: #a52a2a; }
-.color-circle[data-color="gold"] { background-color: #ffd700; }
-.color-circle[data-color="silver"] { background-color: #c0c0c0; }
-.color-circle[data-color="multi"] { background-color: #ff00ff; }
+/* Цвета для фильтра */
+.color-red { background-color: #ff0000; }
+.color-blue { background-color: #0000ff; }
+.color-green { background-color: #008000; }
+.color-yellow { background-color: #ffff00; }
+.color-white { background-color: #ffffff; border: 1px solid #ddd; }
+.color-black { background-color: #000000; }
+.color-pink { background-color: #ffc0cb; }
+.color-purple { background-color: #800080; }
+.color-orange { background-color: #ffa500; }
+.color-brown { background-color: #a52a2a; }
+.color-gold { background-color: #ffd700; }
+.color-silver { background-color: #c0c0c0; }
+.color-multi { background: linear-gradient(135deg, #ff0000, #ffa500, #ffff00, #008000, #0000ff, #800080); }
+
+/* Выбранный цвет (обводка) */
+.color-checkbox:checked + .color-circle {
+    box-shadow: 0 0 0 2px #2c7a51, 0 0 0 4px white;
+    transform: scale(1.05);
+}
