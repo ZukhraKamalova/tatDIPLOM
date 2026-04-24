@@ -292,95 +292,166 @@
         }
         
         function showProducts(products) {
-            if (!products || !Array.isArray(products) || products.length === 0) {
-                return;
-            }
-            
-            const productsContainer = document.createElement('div');
-            productsContainer.className = 'suggested-products';
-            productsContainer.style.cssText = `
-                margin-top: 15px;
-                padding: 12px;
-                background: #f8f9fa;
-                border-radius: 10px;
-                border: 1px solid #dee2e6;
-                max-width: 100%;
+    console.log('showProducts вызвана, товаров:', products ? products.length : 0);
+    
+    if (!products || !Array.isArray(products) || products.length === 0) {
+        console.log('Нет товаров для отображения');
+        return;
+    }
+    
+    // Определяем мобильное устройство
+    const isMobile = window.innerWidth <= 768;
+    
+    // Проверяем последнее сообщение ассистента
+    const lastMessage = chatMessages.querySelector('.message.assistant:last-child');
+    if (!lastMessage) {
+        console.log('Не найдено последнее сообщение ассистента');
+        return;
+    }
+    
+    // Удаляем старый блок с товарами, если есть
+    const oldProducts = lastMessage.querySelector('.suggested-products');
+    if (oldProducts) {
+        oldProducts.remove();
+    }
+    
+    // Создаем контейнер для товаров
+    const productsContainer = document.createElement('div');
+    productsContainer.className = 'suggested-products';
+    productsContainer.style.cssText = `
+        margin-top: 15px;
+        padding: ${isMobile ? '8px' : '12px'};
+        background: #f8f9fa;
+        border-radius: 10px;
+        border: 1px solid #dee2e6;
+        width: 100%;
+        box-sizing: border-box;
+        clear: both;
+    `;
+    
+    // Заголовок
+    const title = document.createElement('div');
+    title.textContent = '✨ Подобранные товары:';
+    title.style.cssText = `
+        font-weight: bold;
+        margin-bottom: ${isMobile ? '8px' : '12px'};
+        color: #2c7a51;
+        font-size: ${isMobile ? '12px' : '14px'};
+        text-align: center;
+    `;
+    productsContainer.appendChild(title);
+    
+    // Сетка для карточек
+    const grid = document.createElement('div');
+    const columns = isMobile ? 2 : 2;
+    grid.style.cssText = `
+        display: grid;
+        grid-template-columns: repeat(${columns}, 1fr);
+        gap: ${isMobile ? '8px' : '12px'};
+    `;
+    
+    // Добавляем карточки товаров
+    products.forEach((product, index) => {
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.style.cssText = `
+            background: white;
+            border-radius: 8px;
+            padding: ${isMobile ? '6px' : '8px'};
+            border: 1px solid #e9ecef;
+            cursor: pointer;
+            transition: transform 0.2s;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            box-sizing: border-box;
+        `;
+        
+        card.onclick = () => {
+            window.open(product.url, '_blank');
+        };
+        
+        // Контейнер для изображения
+        const imgContainer = document.createElement('div');
+        const imgHeight = isMobile ? '70px' : '90px';
+        imgContainer.style.cssText = `
+            height: ${imgHeight};
+            background: #f8f9fa;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 6px;
+            overflow: hidden;
+        `;
+        
+        // Изображение
+        const img = document.createElement('img');
+        img.src = product.image_url || '/static/img/no-image.jpg';
+        img.alt = product.name;
+        img.style.cssText = `
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        `;
+        img.onerror = function() {
+            this.onerror = null;
+            this.src = '/static/img/no-image.jpg';
+        };
+        imgContainer.appendChild(img);
+        
+        // Название товара
+        const nameMaxLen = isMobile ? 18 : 20;
+        const name = document.createElement('div');
+        name.textContent = product.name.length > nameMaxLen ? 
+            product.name.substring(0, nameMaxLen) + '...' : product.name;
+        name.style.cssText = `
+            font-size: ${isMobile ? '10px' : '12px'};
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #212529;
+            line-height: 1.3;
+            text-align: center;
+        `;
+        
+        // Цена
+        const price = document.createElement('div');
+        if (product.sale_price && product.is_sale) {
+            price.innerHTML = `
+                <span style="color: #dc3545; font-weight: bold; font-size: ${isMobile ? '11px' : '13px'};">
+                    ${product.sale_price} ₽
+                </span>
+                <span style="text-decoration: line-through; color: #6c757d; font-size: ${isMobile ? '9px' : '11px'}; margin-left: 4px;">
+                    ${product.price} ₽
+                </span>
             `;
-            
-            const title = document.createElement('div');
-            title.textContent = 'Подобранные товары:';
-            title.style.cssText = `font-weight: bold; margin-bottom: 12px; color: #2c7a51; font-size: 14px;`;
-            productsContainer.appendChild(title);
-            
-            const grid = document.createElement('div');
-            grid.style.cssText = `display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;`;
-            
-            products.forEach((product) => {
-                const card = document.createElement('div');
-                card.className = 'product-card';
-                card.style.cssText = `
-                    background: white;
-                    border-radius: 8px;
-                    padding: 10px;
-                    border: 1px solid #e9ecef;
-                    cursor: pointer;
-                    transition: all 0.3s;
-                    display: flex;
-                    flex-direction: column;
-                    height: 100%;
-                `;
-                card.onclick = () => window.open(product.url, '_blank');
-                
-                const imgContainer = document.createElement('div');
-                imgContainer.style.cssText = `
-                    height: 90px;
-                    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-                    border-radius: 6px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    margin-bottom: 8px;
-                    overflow: hidden;
-                `;
-                
-                const img = document.createElement('img');
-                img.src = product.image_url || '/static/img/no-image.jpg';
-                img.alt = product.name;
-                img.style.cssText = `max-width: 100%; max-height: 100%; object-fit: contain;`;
-                img.onerror = function() {
-                    this.src = 'https://via.placeholder.com/100x100/2c7a51/ffffff?text=Товар';
-                };
-                imgContainer.appendChild(img);
-                
-                const name = document.createElement('div');
-                name.textContent = product.name.length > 20 ? product.name.substring(0, 20) + '...' : product.name;
-                name.style.cssText = `font-size: 12px; font-weight: 600; margin-bottom: 5px; color: #212529;`;
-                
-                const price = document.createElement('div');
-                if (product.sale_price && product.is_sale) {
-                    price.innerHTML = `
-                        <span style="color: #dc3545; font-weight: bold; font-size: 13px;">${product.sale_price} ₽</span>
-                        <span style="text-decoration: line-through; color: #6c757d; font-size: 11px; margin-left: 5px;">${product.price} ₽</span>
-                    `;
-                } else {
-                    price.textContent = product.price + ' ₽';
-                    price.style.cssText = 'font-size: 13px; color: #2c7a51; font-weight: bold; margin-top: auto;';
-                }
-                
-                card.appendChild(imgContainer);
-                card.appendChild(name);
-                card.appendChild(price);
-                grid.appendChild(card);
-            });
-            
-            productsContainer.appendChild(grid);
-            
-            const messageDiv = document.createElement('div');
-            messageDiv.className = 'message assistant';
-            messageDiv.appendChild(productsContainer);
-            chatMessages.appendChild(messageDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+        } else {
+            price.textContent = product.price + ' ₽';
+            price.style.cssText = `font-size: ${isMobile ? '11px' : '13px'}; color: #2c7a51; font-weight: bold; text-align: center;`;
         }
+        
+        card.appendChild(imgContainer);
+        card.appendChild(name);
+        card.appendChild(price);
+        grid.appendChild(card);
+    });
+    
+    productsContainer.appendChild(grid);
+    
+    // Добавляем контейнер в конец последнего сообщения ассистента
+    lastMessage.appendChild(productsContainer);
+    
+    // Прокручиваем вниз
+    setTimeout(() => {
+        chatMessages.scrollTo({
+            top: chatMessages.scrollHeight,
+            behavior: 'smooth'
+        });
+    }, 50);
+    
+    console.log('Товары успешно добавлены в чат, кол-во:', products.length);
+}
+                
         
         // Отправка сообщения
         function sendMessage() {

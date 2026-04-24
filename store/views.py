@@ -21,6 +21,7 @@ from django.apps import apps
 import random
 from django.contrib.auth.decorators import login_required
 from payment.models import Order, OrderItem  
+from django.db.models import Min, Max
 
 
 def search(request):
@@ -129,54 +130,72 @@ def home(request):
 
     return render(request, 'home.html', context)
 
+
+
 def catalog(request):
     products = Product.objects.all()
     
-    # Получаем диапазон цен
-    price_range = Product.objects.aggregate(Min('price'), Max('price'))
-    min_price = price_range['price__min'] or 0
-    max_price = price_range['price__max'] or 0
+    # Получаем выбранные фильтры
+    selected_min_price = request.GET.get('min_price')
+    selected_max_price = request.GET.get('max_price')
+    selected_categories = request.GET.getlist('category')
+    selected_brands = request.GET.getlist('brand')
+    selected_colors = request.GET.getlist('color')
+    
+    # Фильтрация по цветам
+    if selected_colors:
+        products = products.filter(color__in=selected_colors)
+    
+    # Получаем диапазон цен до фильтрации (для отображения)
+    global_min = Product.objects.aggregate(Min('price'))['price__min'] or 0
+    global_max = Product.objects.aggregate(Max('price'))['price__max'] or 0
     
     # Обработка минимальной цены
-    selected_min_price = request.GET.get('min_price', min_price)
     try:
-        selected_min_price = float(selected_min_price)
-        if selected_min_price < min_price:
-            selected_min_price = min_price
+        selected_min_price = float(selected_min_price) if selected_min_price else global_min
+        if selected_min_price < global_min:
+            selected_min_price = global_min
     except (ValueError, TypeError):
-        selected_min_price = min_price
+        selected_min_price = global_min
     
     # Обработка максимальной цены
-    selected_max_price = request.GET.get('max_price', max_price)
     try:
-        selected_max_price = float(selected_max_price)
-        if selected_max_price > max_price:
-            selected_max_price = max_price
+        selected_max_price = float(selected_max_price) if selected_max_price else global_max
+        if selected_max_price > global_max:
+            selected_max_price = global_max
     except (ValueError, TypeError):
-        selected_max_price = max_price
+        selected_max_price = global_max
     
     # Фильтрация по цене
     products = products.filter(price__gte=selected_min_price, price__lte=selected_max_price)
     
-    # Остальные фильтры (категории, бренды)
-    selected_categories = request.GET.getlist('category')
+    # Фильтрация по категориям
     if selected_categories:
         products = products.filter(categories__name__in=selected_categories).distinct()
     
-    selected_brands = request.GET.getlist('brand')
+    # Фильтрация по брендам
     if selected_brands:
         products = products.filter(brand__brand_name__in=selected_brands)
     
+    # Динамический ценовой диапазон после фильтрации
+    current_min = products.aggregate(Min('price'))['price__min'] or global_min
+    current_max = products.aggregate(Max('price'))['price__max'] or global_max
+    
+    # Список цветов для отображения (из модели Product)
+    color_choices = Product.COLOR_CHOICES
+    
     context = {
         'products': products,
-        'min_price': min_price,
-        'max_price': max_price,
+        'min_price': current_min,
+        'max_price': current_max,
         'selected_min_price': selected_min_price,
         'selected_max_price': selected_max_price,
         'categories': Category.objects.all(),
         'brands': Brand.objects.all().order_by('brand_name'),
         'selected_categories': selected_categories,
         'selected_brands': selected_brands,
+        'selected_colors': selected_colors,
+        'color_choices': color_choices,
     }
     
     return render(request, 'catalog.html', context)

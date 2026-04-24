@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-<!-- Header с видеофоном -->
 <header class="bg-dark text-white py-5" style="
     height: 50vh;
     position: relative;
@@ -47,61 +46,70 @@
 
 <div class="container-fluid mt-3">
     <div class="row">
-        <!-- Левая панель фильтров -->
         <div class="col-lg-2">
             <div class="filter-panel">
                 <h5 class="text-gold">Фильтр товаров</h5>
                 <form method="get" action="{% url 'catalog' %}" id="priceFilterForm">
-                    <!-- Фильтр по цене -->
                     <div class="mb-3">
                         <label class="form-label">Цена</label>
                         <div class="d-flex align-items-center gap-2">
-                            <input type="number" 
-                                   class="form-control w-auto" 
-                                   style="min-width: 77px;"
-                                   name="min_price" 
-                                   id="minPriceInput" 
-                                   placeholder="От" 
-                                   value="{{ selected_min_price }}" 
-                                   min="{{ min_price }}">
+                            <input type="number" class="form-control w-auto" style="min-width: 77px;"
+                                   name="min_price" id="minPriceInput" placeholder="От" 
+                                   value="{{ selected_min_price }}" min="{{ min_price }}">
                             <span class="flex-shrink-0">—</span>
-                            <input type="number" 
-                                   class="form-control w-auto" 
-                                   style="min-width: 77px;"
-                                   name="max_price" 
-                                   id="maxPriceInput" 
-                                   placeholder="До" 
-                                   value="{{ selected_max_price }}" 
-                                   max="{{ max_price }}">
+                            <input type="number" class="form-control w-auto" style="min-width: 77px;"
+                                   name="max_price" id="maxPriceInput" placeholder="До" 
+                                   value="{{ selected_max_price }}" max="{{ max_price }}">
                         </div>
                         <div class="text-muted small mt-1">
                             Диапазон: {{ min_price }}₽ — {{ max_price }}₽
                         </div>
                     </div>
                     
-                    <!-- Категории -->
                     <div class="mb-3">
-                        <label class="form-label" onclick="toggleCategory()" style="cursor:pointer;">
-                            Категории
-                        </label>
-                        <div id="categoryList">
-                        {% for category in categories %}
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="category"
-                                       value="{{ category.name }}" id="cat{{ forloop.counter }}"
-                                       {% if category.name in selected_categories %}checked{% endif %}>
-                                <label class="form-check-label" for="cat{{ forloop.counter }}">{{ category.name }}</label>
-                            </div>
-                        {% endfor %}
-                    </div>
+    <div class="d-flex justify-content-between align-items-center" style="cursor: pointer;" onclick="toggleColors()">
+        <label class="form-label mb-0">Цвета</label>
+        <small id="colorsToggleIcon">▼</small>
+    </div>
+    <div id="colorsList" style="display: block; margin-top: 10px;">
+        <div class="color-grid" style="display: flex; flex-wrap: wrap; gap: 8px;">
+            {% for color_code, color_name in color_choices %}
+            <label class="color-tile" style="display: flex; flex-direction: column; align-items: center; cursor: pointer; width: 50px;">
+                <input type="checkbox" name="color" value="{{ color_code }}" 
+                       style="display: none;" 
+                       {% if color_code in selected_colors %}checked{% endif %}
+                       onchange="this.form.submit()">
+                <div class="color-circle" data-color="{{ color_code }}" style="width: 35px; height: 35px; border-radius: 50%; border: 2px solid #ddd; box-shadow: 0 1px 3px rgba(0,0,0,0.2);"></div>
+                <span style="font-size: 10px; margin-top: 4px;">{{ color_name }}</span>
+            </label>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center" style="cursor: pointer;" onclick="toggleCategory()">
+                            <label class="form-label mb-0">Категории</label>
+                            <small id="categoryToggleIcon">▶</small>
+                        </div>
+                        <div id="categoryList" style="display: none; margin-top: 10px;">
+                            {% for category in categories %}
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="category"
+                                           value="{{ category.name }}" id="cat{{ forloop.counter }}"
+                                           {% if category.name in selected_categories %}checked{% endif %}>
+                                    <label class="form-check-label" for="cat{{ forloop.counter }}">{{ category.name }}</label>
+                                </div>
+                            {% endfor %}
+                        </div>
                     </div>
                     
-                    <!-- Фильтр по брендам -->
                     <div class="mb-3">
-                        <label class="form-label" onclick="toggleBrands()" style="cursor:pointer;">
-                            Бренды
-                        </label>
-                        <div id="brandList">
+                        <div class="d-flex justify-content-between align-items-center" style="cursor: pointer;" onclick="toggleBrands()">
+                            <label class="form-label mb-0">Бренды</label>
+                            <small id="brandsToggleIcon">▶</small>
+                        </div>
+                        <div id="brandList" style="display: none; margin-top: 10px;">
                             {% for brand in brands %}
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" name="brand"
@@ -126,12 +134,10 @@
                         {% if product.is_sale %}
                         <div class="badge bg-danger text-white position-absolute" style="top: 0.5rem; right: 0.5rem; z-index: 1;">Скидка</div>
                         {% endif %}
-                        
                         <div style="position: relative; width: 100%; padding-top: 100%; overflow: hidden;">
                             <img src="{{ product.image.url }}" alt="{{ product.name }}"
                                  style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
                         </div>
-                        
                         <div class="card-body text-center">
                             <h5 class="card-title fw-bold" style="font-size: 14px; min-height: 40px;">{{ product.name }}</h5>
                             {% if product.is_sale %}
@@ -143,7 +149,6 @@
                                 <p class="mb-1 fw-bold">{{ product.price }}₽</p>
                             {% endif %}
                         </div>
-                        
                         <div class="card-footer bg-transparent border-0 text-center pt-0">
                             <div class="d-flex justify-content-center align-items-center gap-2 mb-2">
                                 <input type="number" class="form-control text-center qty-input" value="1" min="1" max="50" style="width: 55px;">
@@ -166,6 +171,42 @@
 <div id="csrf-token" data-token="{{ csrf_token }}"></div>
 
 <script>
+function toggleCategory() {
+    const list = document.getElementById('categoryList');
+    const icon = document.getElementById('categoryToggleIcon');
+    if (list.style.display === 'none') {
+        list.style.display = 'block';
+        icon.textContent = '▼';
+    } else {
+        list.style.display = 'none';
+        icon.textContent = '▶';
+    }
+}
+
+function toggleBrands() {
+    const list = document.getElementById('brandList');
+    const icon = document.getElementById('brandsToggleIcon');
+    if (list.style.display === 'none') {
+        list.style.display = 'block';
+        icon.textContent = '▼';
+    } else {
+        list.style.display = 'none';
+        icon.textContent = '▶';
+    }
+}
+
+function toggleColors() {
+    const list = document.getElementById('colorsList');
+    const icon = document.getElementById('colorsToggleIcon');
+    if (list.style.display === 'none') {
+        list.style.display = 'block';
+        icon.textContent = '▼';
+    } else {
+        list.style.display = 'none';
+        icon.textContent = '▶';
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     const minPriceInput = document.getElementById('minPriceInput');
     const maxPriceInput = document.getElementById('maxPriceInput');
@@ -176,11 +217,9 @@ document.addEventListener('DOMContentLoaded', function() {
     form.addEventListener('submit', function(e) {
         let minVal = parseFloat(minPriceInput.value) || minPrice;
         let maxVal = parseFloat(maxPriceInput.value) || maxPrice;
-        
         if (minVal < minPrice) minVal = minPrice;
         if (maxVal > maxPrice) maxVal = maxPrice;
         if (minVal > maxVal) minVal = maxPrice;
-        
         minPriceInput.value = minVal;
         maxPriceInput.value = maxVal;
     });
@@ -204,14 +243,14 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.add-to-cart-btn').forEach(function(btn) {
         btn.addEventListener('click', function() {
             const productId = this.dataset.productId;
-            const card = this.closest('.card') || this.parentElement;
+            const card = this.closest('.card');
             const qtyInput = card.querySelector('.qty-input');
             const qty = qtyInput ? qtyInput.value : 1;
             const csrfToken = document.getElementById('csrf-token').dataset.token;
             if (!productId) {
-    Swal.fire('Ошибка', 'Нет ID товара', 'error');
-    return;
-}
+                Swal.fire('Ошибка', 'Нет ID товара', 'error');
+                return;
+            }
             fetch("{% url 'cart_add' %}", {
                 method: 'POST',
                 headers: {
@@ -241,19 +280,5 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
-
-function toggleBrands() {
-    const list = document.getElementById('brandList');
-    if (list) {
-        list.style.display = list.style.display === 'none' ? 'block' : 'none';
-    }
-}
-
-function toggleCategory() {
-    const list = document.getElementById('categoryList');
-    if (list) {
-        list.style.display = list.style.display === 'none' ? 'block' : 'none';
-    }
-}
 </script>
 {% endblock %}
