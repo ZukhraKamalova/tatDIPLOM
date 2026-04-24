@@ -47,7 +47,7 @@
 <div class="container-fluid mt-3">
     <div class="row">
         <!-- Левая панель фильтров -->
-        <div class="col-lg-3">
+        <div class="col-lg-2">
             <div class="filter-panel">
                 <h5 class="text-gold">Фильтр товаров</h5>
                 <form method="get" action="{% url 'catalog' %}" id="priceFilterForm">
@@ -65,29 +65,29 @@
                         </div>
                     </div>
                     
-                
-<div class="mb-3">
-    <div class="d-flex justify-content-between align-items-center" style="cursor: pointer;" onclick="toggleColors()">
-        <label class="form-label mb-0">Цвета</label>
-        <small id="colorsToggleIcon">▼</small>
-    </div>
-    <div id="colorsList" style="display: block; margin-top: 10px;">
-        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-            {% for color_code, color_name in color_choices %}
-            <label style="cursor: pointer;" title="{{ color_name }}">
-                <input type="checkbox" name="color" value="{{ color_code }}" 
-                       style="display: none;" 
-                       class="color-checkbox"
-                       {% if color_code in selected_colors %}checked{% endif %}
-                       onchange="this.form.submit()">
-                <div class="color-dot color-{{ color_code }} {% if color_code in selected_colors %}selected{% endif %}"></div>
-            </label>
-            {% endfor %}
-        </div>
-    </div>
-</div>
+                    <!-- Цвета -->
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center" style="cursor: pointer;" onclick="toggleColors()">
+                            <label class="form-label mb-0">Цвета</label>
+                            <small id="colorsToggleIcon">▼</small>
+                        </div>
+                        <div id="colorsList" style="display: block; margin-top: 10px;">
+                            <div class="color-grid">
+                                {% for color_code, color_name in color_choices %}
+                                <label class="color-label" title="{{ color_name }}">
+                                    <input type="checkbox" name="color" value="{{ color_code }}" 
+                                           class="color-checkbox-hidden"
+                                           {% if color_code in selected_colors %}checked{% endif %}
+                                           onchange="this.form.submit()">
+                                    <span class="color-dot color-dot-{{ color_code }} {% if color_code in selected_colors %}selected{% endif %}"></span>
+                                    <span class="color-name">{{ color_name }}</span>
+                                </label>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
                     
-                    <!-- Категории (свернутые) -->
+                    <!-- Категории -->
                     <div class="mb-3">
                         <div class="d-flex justify-content-between align-items-center" style="cursor: pointer;" onclick="toggleCategory()">
                             <label class="form-label mb-0">Категории</label>
@@ -106,7 +106,7 @@
                         </div>
                     </div>
                     
-                    <!-- Бренды (свернутые) -->
+                    <!-- Бренды -->
                     <div class="mb-3">
                         <div class="d-flex justify-content-between align-items-center" style="cursor: pointer;" onclick="toggleBrands()">
                             <label class="form-label mb-0">Бренды</label>
@@ -130,11 +130,11 @@
             </div>
         </div>
         
-        <!-- Сетка товаров СПРАВА -->
-        <div class="col-lg-9">
+        <!-- Сетка товаров - 4 КОЛОНКИ -->
+        <div class="col-lg-10">
             <div class="row g-4">
                 {% for product in products %}
-                <div class="col-lg-4 col-md-6 col-sm-6 col-6">
+                <div class="col-lg-3 col-md-4 col-sm-6 col-6">
                     <div class="card h-100 border-0 shadow-sm">
                         {% if product.is_sale %}
                         <div class="badge bg-danger text-white position-absolute" style="top: 0.5rem; right: 0.5rem; z-index: 1;">Скидка</div>
@@ -174,6 +174,70 @@
 </div>
 
 <div id="csrf-token" data-token="{{ csrf_token }}"></div>
+
+<style>
+/* Стили для цветового фильтра */
+.color-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.color-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.color-checkbox-hidden {
+    display: none;
+}
+
+.color-dot {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid #ddd;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.color-dot.selected {
+    border-color: #2c7a51;
+    box-shadow: 0 0 0 2px #fff, 0 0 0 3px #2c7a51;
+    transform: scale(1.05);
+}
+
+.color-name {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Цвета */
+.color-dot-red { background-color: #ff0000; }
+.color-dot-blue { background-color: #0000ff; }
+.color-dot-green { background-color: #008000; }
+.color-dot-yellow { background-color: #ffff00; }
+.color-dot-white { background-color: #ffffff; border: 1px solid #ccc; }
+.color-dot-black { background-color: #000000; }
+.color-dot-pink { background-color: #ffc0cb; }
+.color-dot-purple { background-color: #800080; }
+.color-dot-orange { background-color: #ffa500; }
+.color-dot-brown { background-color: #a52a2a; }
+.color-dot-gold { background-color: #ffd700; }
+.color-dot-silver { background-color: #c0c0c0; }
+.color-dot-multi { background: linear-gradient(135deg, #ff0000, #ffa500, #ffff00, #008000, #0000ff, #800080); }
+
+@media (max-width: 768px) {
+    .color-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+</style>
 
 <script>
 function toggleCategory() {
@@ -231,17 +295,60 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 document.addEventListener('DOMContentLoaded', function () {
-    // Обновление выделения цветов
-document.querySelectorAll('.color-checkbox').forEach(checkbox => {
-    checkbox.addEventListener('change', function() {
-        const dot = this.nextElementSibling;
-        if (this.checked) {
-            dot.classList.add('selected');
-        } else {
-            dot.classList.remove('selected');
-        }
+    document.querySelectorAll('.add-to-cart-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            const productId = this.dataset.productId;
+            const card = this.closest('.card');
+            const qtyInput = card.querySelector('.qty-input');
+            const qty = qtyInput ? qtyInput.value : 1;
+            const csrfToken = document.getElementById('csrf-token').dataset.token;
+            fetch("{% url 'cart_add' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': csrfToken
+                },
+                body: new URLSearchParams({
+                    'product_id': productId,
+                    'product_qty': qty,
+                    'action': 'post'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const cartQuantityElem = document.getElementById('cart_quantity');
+                if (cartQuantityElem) cartQuantityElem.textContent = data.cart_quantity;
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Добавлено в корзину',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            })
+            .catch(error => {
+                Swal.fire('Ошибка', 'Не удалось добавить товар', 'error');
+            });
+        });
     });
-});
+    
+    // Выделение выбранных цветов
+    document.querySelectorAll('.color-checkbox-hidden').forEach(checkbox => {
+        const dot = checkbox.nextElementSibling;
+        const nameSpan = dot.nextElementSibling;
+        if (checkbox.checked) {
+            dot.classList.add('selected');
+            if (nameSpan) nameSpan.style.fontWeight = 'bold';
+        }
+        checkbox.addEventListener('change', function() {
+            if (this.checked) {
+                dot.classList.add('selected');
+                if (nameSpan) nameSpan.style.fontWeight = 'bold';
+            } else {
+                dot.classList.remove('selected');
+                if (nameSpan) nameSpan.style.fontWeight = 'normal';
+            }
+        });
+    });
 });
 </script>
 {% endblock %}
